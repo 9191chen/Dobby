@@ -419,13 +419,13 @@
     <div class="field">
       <label>Excel 檔案路徑</label>
       <div class="path-row">
-        <input type="text" id="excelPath" placeholder="例：C:\Users\你的名字\Desktop\逾期清單.xlsx" />
+        <input type="text" id="excelPath" placeholder="例：C:\Users\你的名字\Desktop\逾期清單.xlsx" oninput="cleanPath(this)" onpaste="setTimeout(()=>cleanPath(this),0)" />
       </div>
     </div>
     <div class="field">
       <label>PDF 資料夾路徑</label>
       <div class="path-row">
-        <input type="text" id="pdfPath" placeholder="例：C:\Users\你的名字\Desktop\對帳單" />
+        <input type="text" id="pdfPath" placeholder="例：C:\Users\你的名字\Desktop\對帳單" oninput="cleanPath(this)" onpaste="setTimeout(()=>cleanPath(this),0)" />
       </div>
     </div>
     <div class="field">
@@ -677,6 +677,13 @@ Finance</textarea>
     const e = target.selectionEnd;
     target.value = target.value.slice(0, s) + v + target.value.slice(e);
     target.selectionStart = target.selectionEnd = s + v.length;
+  }
+
+  function cleanPath(el) {
+    // 移除前後空白、以及前後多餘的引號（右鍵複製路徑會帶引號）
+    let v = el.value.trim();
+    v = v.replace(/^"+|"+$/g, '');
+    el.value = v.trim();
   }
 
   function generateVBA() {
