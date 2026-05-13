@@ -711,19 +711,24 @@ Finance</textarea>
       };
 
       return raw.split('\n').map(line => {
-        // 先把變數換成 placeholder
         VARS.forEach(([v, p]) => { line = line.split(v).join(p); });
-        // 把引號 escape（只影響使用者打的文字，不影響 placeholder）
         line = line.replace(/"/g, '""');
-        // 把 placeholder 換回 VBA 變數語法
         Object.keys(VBA_VARS).forEach(p => { line = line.split(p).join(VBA_VARS[p]); });
+        // 清理開頭多餘的空字串：從 "" & 開頭 → 直接從變數開始
+        line = line.replace(/^"" & /, '');
+        // 也處理 escape 過後的版本
+        line = line.replace(/^"" & /, '');
         return line;
       });
     }
 
     // 把行陣列組成 VBA HTMLBody 的 & _ 串接格式
     function linesToVbaBody(lines, indent) {
-      return lines.map(l => indent + '"' + l + '<br>"').join(' & _\n');
+      return lines.map((l, idx) => {
+        // 去掉行首的 " & 和行尾的 & " 造成的空字串
+        let vbaLine = indent + '"' + l + '<br>"';
+        return vbaLine;
+      }).join(' & _\n');
     }
 
     const greetingLines = toVbaHtmlLines(greeting, dueDay);
@@ -816,7 +821,7 @@ Finance</textarea>
     lines.push(ind + '"<br><br>" & _');
     lines.push(bodyMainVba + ' & _');
     lines.push(ind + '"<br><br>" & _');
-    if (useDueDate) lines.push(dueDateVba.trimEnd() + ' & _');
+    if (useDueDate) lines.push(ind + '"請於本月' + dueDay + '號前完成繳款。<br>" & _');
     lines.push(bodySignVba + ' & _');
     lines.push(ind + '"</div>"');
     lines.push('                Call AttachPdfFilesForGroup(ws, groupItems, olMail, folderPath)');
