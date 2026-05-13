@@ -693,249 +693,273 @@ Finance</textarea>
     const useCC = document.getElementById('useCC').checked;
     const ccColumn = document.getElementById('ccColumn').value.trim().toUpperCase() || 'G';
 
-    // 正確順序：先 escape 引號，再插入變數（變數裡的引號不能被 escape）
-    function toVbaStr(raw, dueDay) {
-      return raw
-        .split('\n')
-        .map(line => {
-          // 先把這行的引號 escape
-          let escaped = line.replace(/"/g, '""');
-          // 再把變數還原（變數裡的引號不用 escape，因為它們是 VBA 語法的一部分）
-          escaped = escaped
-            .replace(/\{\{醫師名\}\}/g, '" & doctorName & "')
-            .replace(/\{\{診所名\}\}/g, '" & clinicName & "')
-            .replace(/\{\{業務名\}\}/g, '" & salesName & "')
-            .replace(/\{\{金額\}\}/g, '" & Format(totalAmt, "#,##0") & "')
-            .replace(/\{\{截止日\}\}/g, dueDay);
-          return escaped;
-        })
-        .join('<br>" & _\n               "');
+    // 把使用者輸入的文字轉成 VBA HTMLBody 的字串片段
+    // 策略：每一行獨立處理，變數用特殊 placeholder 保護，最後再還原
+    function toVbaHtmlLines(raw, dueDay) {
+      const VARS = [
+        ['{{醫師名}}', '___DR___'],
+        ['{{診所名}}', '___CL___'],
+        ['{{業務名}}', '___SL___'],
+        ['{{金額}}',   '___AM___'],
+        ['{{截止日}}', dueDay],
+      ];
+      const VBA_VARS = {
+        '___DR___': '" & doctorName & "',
+        '___CL___': '" & clinicName & "',
+        '___SL___': '" & salesName & "',
+        '___AM___': '" & Format(totalAmt, "#,##0") & "',
+      };
+
+      return raw.split('\n').map(line => {
+        // 先把變數換成 placeholder
+        VARS.forEach(([v, p]) => { line = line.split(v).join(p); });
+        // 把引號 escape（只影響使用者打的文字，不影響 placeholder）
+        line = line.replace(/"/g, '""');
+        // 把 placeholder 換回 VBA 變數語法
+        Object.keys(VBA_VARS).forEach(p => { line = line.split(p).join(VBA_VARS[p]); });
+        return line;
+      });
     }
 
-    const greetingVba = toVbaStr(greeting, dueDay);
-    const bodyMainVba = toVbaStr(bodyMain, dueDay);
-    const bodySignVba = toVbaStr(bodySign, dueDay);
+    // 把行陣列組成 VBA HTMLBody 的 & _ 串接格式
+    function linesToVbaBody(lines, indent) {
+      return lines.map(l => indent + '"' + l + '<br>"').join(' & _\n');
+    }
 
-    const thresholdLine = useThreshold
-      ? `        If totalAmt > ${threshold} Then`
-      : `        If True Then ' 無金額門檻，全部發信`;
+    const greetingLines = toVbaHtmlLines(greeting, dueDay);
+    const bodyMainLines = toVbaHtmlLines(bodyMain, dueDay);
+    const bodySignLines = toVbaHtmlLines(bodySign, dueDay);
+    const ind = '               ';
 
-    const dueDateLine = useDueDate
-      ? `               "請於本月${dueDay}號前完成繳款。<br>" & _\n` : '';
+    const greetingVba = linesToVbaBody(greetingLines, ind);
+    const bodyMainVba = linesToVbaBody(bodyMainLines, ind);
+    const bodySignVba = linesToVbaBody(bodySignLines, ind);
+    const dueDateVba  = useDueDate ? ind + '"請於本月' + dueDay + '號前完成繳款。<br>" & _\n' : '';
 
-    const ccLine = useCC
-      ? `ccEmail    = Trim(CStr(ws.Cells(firstRow, "${ccColumn}").Value))`
-      : `ccEmail    = "" ' CC 未啟用`;
+    const lines = [];
+    lines.push('Option Explicit');
+    lines.push('');
+    lines.push('Sub 發信草稿_依設定產生()');
+    lines.push('');
+    lines.push('    Dim olApp As Object, olMail As Object');
+    lines.push('    Dim ws As Worksheet');
+    lines.push('    Set ws = ThisWorkbook.Sheets("' + sheetName.replace(/"/g, '""') + '")');
+    lines.push('');
+    lines.push('    Dim lastRow As Long, i As Long');
+    lines.push('    Dim groupDict As Object');
+    lines.push('    Set groupDict = CreateObject("Scripting.Dictionary")');
+    lines.push('');
+    lines.push('    Dim doctorName As String, salesName As String, clinicName As String');
+    lines.push('    Dim email As String, ccEmail As String, groupKey As String');
+    lines.push('    Dim k As Variant, firstRow As Long');
+    lines.push('    Dim groupItems As Collection');
+    lines.push('    Dim totalAmt As Double');
+    lines.push('    Dim createdCount As Long, skippedCount As Long');
+    lines.push('    Dim groupContentHtml As String');
+    lines.push('');
+    lines.push('    Dim folderPath As String');
+    lines.push('    folderPath = "' + pdfPath.replace(/"/g, '""') + '"');
+    lines.push('');
+    lines.push('    Set olApp = CreateObject("Outlook.Application")');
+    lines.push('');
+    lines.push('    If Dir(folderPath, vbDirectory) = "" Then');
+    lines.push('        MsgBox "找不到 PDF 資料夾：" & vbCrLf & folderPath, vbExclamation');
+    lines.push('        Exit Sub');
+    lines.push('    End If');
+    lines.push('');
+    lines.push('    lastRow = ws.Cells(ws.Rows.Count, "D").End(xlUp).Row');
+    lines.push('');
+    lines.push("    '== 分組：醫師(D) + 業務(F) ==");
+    lines.push('    For i = 2 To lastRow');
+    lines.push('        doctorName = Trim(CStr(ws.Cells(i, "D").Value))');
+    lines.push('        salesName  = Trim(CStr(ws.Cells(i, "F").Value))');
+    lines.push('        If doctorName <> "" And salesName <> "" Then');
+    lines.push('            groupKey = doctorName & "||" & salesName');
+    lines.push('            If Not groupDict.Exists(groupKey) Then');
+    lines.push('                Set groupDict(groupKey) = New Collection');
+    lines.push('            End If');
+    lines.push('            groupDict(groupKey).Add i');
+    lines.push('        End If');
+    lines.push('    Next i');
+    lines.push('');
+    lines.push("    '== 建立草稿 ==");
+    lines.push('    For Each k In groupDict.Keys');
+    lines.push('        Set groupItems = groupDict(k)');
+    lines.push('        firstRow   = groupItems(1)');
+    lines.push('        doctorName = Trim(CStr(ws.Cells(firstRow, "D").Value))');
+    lines.push('        salesName  = Trim(CStr(ws.Cells(firstRow, "F").Value))');
+    lines.push('        clinicName = Trim(CStr(ws.Cells(firstRow, "C").Value))');
+    lines.push('        email      = Trim(CStr(ws.Cells(firstRow, "A").Value))');
+    if (useCC) {
+      lines.push('        ccEmail    = Trim(CStr(ws.Cells(firstRow, "' + ccColumn + '").Value))');
+    } else {
+      lines.push("        ccEmail    = \"\" ' CC 未啟用");
+    }
+    lines.push('        totalAmt   = GetGroupTotal(ws, groupItems)');
+    lines.push('');
+    if (useThreshold) {
+      lines.push('        If totalAmt > ' + threshold + ' Then');
+    } else {
+      lines.push("        If True Then ' 無金額門檻，全部發信");
+    }
+    lines.push('            groupContentHtml = GetGroupContentHtml(ws, groupItems, totalAmt)');
+    lines.push('');
+    lines.push('            Set olMail = olApp.CreateItem(0)');
+    lines.push('            With olMail');
+    lines.push('                .To = email');
+    lines.push('                If ccEmail <> "" Then .CC = ccEmail');
+    lines.push('                .Subject = "' + subject.replace(/"/g, '""') + '"');
+    lines.push('                .HTMLBody = "<div style=\'font-family:Microsoft JhengHei,Arial,sans-serif;font-size:11pt;\'>" & _');
+    lines.push(greetingVba + ' & _');
+    lines.push(ind + '"<br><br>" & _');
+    lines.push(ind + 'groupContentHtml & _');
+    lines.push(ind + '"<br><br>" & _');
+    lines.push(bodyMainVba + ' & _');
+    lines.push(ind + '"<br><br>" & _');
+    if (useDueDate) lines.push(dueDateVba.trimEnd() + ' & _');
+    lines.push(bodySignVba + ' & _');
+    lines.push(ind + '"</div>"');
+    lines.push('                Call AttachPdfFilesForGroup(ws, groupItems, olMail, folderPath)');
+    lines.push('                .Save');
+    lines.push('            End With');
+    lines.push('            createdCount = createdCount + 1');
+    lines.push('        Else');
+    lines.push('            skippedCount = skippedCount + 1');
+    lines.push('        End If');
+    lines.push('    Next k');
+    lines.push('');
+    lines.push('    MsgBox "完成！" & vbCrLf & _');
+    lines.push('           "已建立草稿：" & createdCount & " 封" & vbCrLf & _');
+    lines.push('           "跳過：" & skippedCount & " 組", vbInformation');
+    lines.push('');
+    lines.push('End Sub');
+    lines.push('');
+    lines.push('');
+    lines.push('Function GetGroupTotal(ws As Worksheet, groupItems As Collection) As Double');
+    lines.push('    Dim i As Long, r As Long, total As Double');
+    lines.push('    For i = 1 To groupItems.Count');
+    lines.push('        r = groupItems(i)');
+    lines.push('        If IsNumeric(ws.Cells(r, "E").Value) Then');
+    lines.push('            total = total + CDbl(ws.Cells(r, "E").Value)');
+    lines.push('        End If');
+    lines.push('    Next i');
+    lines.push('    GetGroupTotal = total');
+    lines.push('End Function');
+    lines.push('');
+    lines.push('');
+    lines.push('Function GetGroupContentHtml(ws As Worksheet, groupItems As Collection, totalAmt As Double) As String');
+    lines.push('    If groupItems.Count = 1 Then');
+    lines.push('        GetGroupContentHtml = "您目前尚欠的逾期款為 " & _');
+    lines.push('                              "<span style=\'color:red; font-size:16px; font-weight:bold;\'>$" & _');
+    lines.push('                              Format(totalAmt, "#,##0") & "</span>"');
+    lines.push('    Else');
+    lines.push('        GetGroupContentHtml = "下列是您目前尚欠的逾期款明細：<br><br>" & _');
+    lines.push('                              BuildHtmlTable(ws, groupItems)');
+    lines.push('    End If');
+    lines.push('End Function');
+    lines.push('');
+    lines.push('');
+    lines.push('Function BuildHtmlTable(ws As Worksheet, groupItems As Collection) As String');
+    lines.push('    Dim html As String');
+    lines.push('    Dim i As Long, r As Long, totalAmt As Double');
+    lines.push('');
+    lines.push('    html = "<table border=\'1\' cellspacing=\'0\' cellpadding=\'6\' style=\'border-collapse:collapse; font-family:Microsoft JhengHei,Arial,sans-serif; font-size:11pt;\'>" & _');
+    lines.push('           "<tr style=\'background-color:#f2f2f2;\'>" & _');
+    lines.push('           "<th>Account</th><th>診所</th><th>醫師名</th><th>逾期款</th>" & _');
+    lines.push('           "</tr>"');
+    lines.push('');
+    lines.push('    totalAmt = 0');
+    lines.push('    For i = 1 To groupItems.Count');
+    lines.push('        r = groupItems(i)');
+    lines.push('        html = html & "<tr>" & _');
+    lines.push('                      "<td>" & ws.Cells(r, "B").Value & "</td>" & _');
+    lines.push('                      "<td>" & ws.Cells(r, "C").Value & "</td>" & _');
+    lines.push('                      "<td>" & ws.Cells(r, "D").Value & "</td>" & _');
+    lines.push('                      "<td align=\'right\'>$" & Format(ws.Cells(r, "E").Value, "#,##0") & "</td>" & _');
+    lines.push('                      "</tr>"');
+    lines.push('        If IsNumeric(ws.Cells(r, "E").Value) Then');
+    lines.push('            totalAmt = totalAmt + CDbl(ws.Cells(r, "E").Value)');
+    lines.push('        End If');
+    lines.push('    Next i');
+    lines.push('');
+    lines.push('    html = html & "<tr style=\'background-color:#fff2cc; font-weight:bold;\'>" & _');
+    lines.push('                  "<td colspan=\'3\' align=\'center\'>加總</td>" & _');
+    lines.push('                  "<td align=\'right\'>$" & Format(totalAmt, "#,##0") & "</td>" & _');
+    lines.push('                  "</tr></table>"');
+    lines.push('');
+    lines.push('    BuildHtmlTable = html');
+    lines.push('End Function');
+    lines.push('');
+    lines.push('');
+    lines.push('Sub AttachPdfFilesForGroup(ws As Worksheet, groupItems As Collection, olMail As Object, folderPath As String)');
+    lines.push('');
+    lines.push('    Dim attachedDict As Object');
+    lines.push('    Set attachedDict = CreateObject("Scripting.Dictionary")');
+    lines.push('');
+    lines.push('    Dim allFiles() As String');
+    lines.push('    Dim fileCount As Long, f As String');
+    lines.push('    fileCount = 0');
+    lines.push('');
+    lines.push('    f = Dir(folderPath & "\\*.pdf")');
+    lines.push('    Do While f <> ""');
+    lines.push('        ReDim Preserve allFiles(fileCount)');
+    lines.push('        allFiles(fileCount) = f');
+    lines.push('        fileCount = fileCount + 1');
+    lines.push('        f = Dir()');
+    lines.push('    Loop');
+    lines.push('');
+    lines.push('    Dim i As Long, j As Long, r As Long');
+    lines.push('    Dim accountValue As String, fullPath As String');
+    lines.push('');
+    lines.push('    For i = 1 To groupItems.Count');
+    lines.push('        r = groupItems(i)');
+    lines.push('        accountValue = Trim(CStr(ws.Cells(r, "B").Value))');
+    lines.push('        If accountValue <> "" And fileCount > 0 Then');
+    lines.push('            For j = 0 To fileCount - 1');
+    lines.push('                If IsPdfMatch(allFiles(j), accountValue) Then');
+    lines.push('                    fullPath = folderPath & "\\" & allFiles(j)');
+    lines.push('                    If Not attachedDict.Exists(fullPath) Then');
+    lines.push('                        olMail.Attachments.Add fullPath');
+    lines.push('                        attachedDict.Add fullPath, True');
+    lines.push('                    End If');
+    lines.push('                End If');
+    lines.push('            Next j');
+    lines.push('        End If');
+    lines.push('    Next i');
+    lines.push('');
+    lines.push('End Sub');
+    lines.push('');
+    lines.push('');
+    lines.push('Function IsPdfMatch(fileName As String, accountValue As String) As Boolean');
+    lines.push('    Dim fd As String, ad As String');
+    lines.push('    fd = RemoveLeadingZeros(DigitsOnly(LCase$(fileName)))');
+    lines.push('    ad = RemoveLeadingZeros(DigitsOnly(LCase$(Trim$(CStr(accountValue)))))');
+    lines.push('    If ad <> "" And fd <> "" Then');
+    lines.push('        IsPdfMatch = (fd = ad)');
+    lines.push('    Else');
+    lines.push('        IsPdfMatch = False');
+    lines.push('    End If');
+    lines.push('End Function');
+    lines.push('');
+    lines.push('');
+    lines.push('Function DigitsOnly(ByVal txt As String) As String');
+    lines.push('    Dim i As Long, ch As String, result As String');
+    lines.push('    For i = 1 To Len(txt)');
+    lines.push('        ch = Mid$(txt, i, 1)');
+    lines.push('        If ch Like "#" Then result = result & ch');
+    lines.push('    Next i');
+    lines.push('    DigitsOnly = result');
+    lines.push('End Function');
+    lines.push('');
+    lines.push('');
+    lines.push('Function RemoveLeadingZeros(ByVal txt As String) As String');
+    lines.push('    Do While Len(txt) > 1 And Left$(txt, 1) = "0"');
+    lines.push('        txt = Mid$(txt, 2)');
+    lines.push('    Loop');
+    lines.push('    RemoveLeadingZeros = txt');
+    lines.push('End Function');
 
-    const code = `Option Explicit
-
-Sub 發信草稿_依設定產生()
-
-    Dim olApp As Object, olMail As Object
-    Dim ws As Worksheet
-    Set ws = ThisWorkbook.Sheets("${sheetName.replace(/"/g, '""')}")
-
-    Dim lastRow As Long, i As Long
-    Dim groupDict As Object
-    Set groupDict = CreateObject("Scripting.Dictionary")
-
-    Dim doctorName As String, salesName As String, clinicName As String
-    Dim email As String, ccEmail As String, groupKey As String
-    Dim k As Variant, firstRow As Long
-    Dim groupItems As Collection
-    Dim totalAmt As Double
-    Dim createdCount As Long, skippedCount As Long
-    Dim groupContentHtml As String
-
-    Dim folderPath As String
-    folderPath = "${pdfPath.replace(/\\/g, '\\').replace(/"/g, '""')}"
-
-    Set olApp = CreateObject("Outlook.Application")
-
-    If Dir(folderPath, vbDirectory) = "" Then
-        MsgBox "找不到 PDF 資料夾：" & vbCrLf & folderPath, vbExclamation
-        Exit Sub
-    End If
-
-    lastRow = ws.Cells(ws.Rows.Count, "D").End(xlUp).Row
-
-    '== 分組：醫師(D) + 業務(F) ==
-    For i = 2 To lastRow
-        doctorName = Trim(CStr(ws.Cells(i, "D").Value))
-        salesName  = Trim(CStr(ws.Cells(i, "F").Value))
-        If doctorName <> "" And salesName <> "" Then
-            groupKey = doctorName & "||" & salesName
-            If Not groupDict.Exists(groupKey) Then
-                Set groupDict(groupKey) = New Collection
-            End If
-            groupDict(groupKey).Add i
-        End If
-    Next i
-
-    '== 建立草稿 ==
-    For Each k In groupDict.Keys
-        Set groupItems = groupDict(k)
-        firstRow   = groupItems(1)
-        doctorName = Trim(CStr(ws.Cells(firstRow, "D").Value))
-        salesName  = Trim(CStr(ws.Cells(firstRow, "F").Value))
-        clinicName = Trim(CStr(ws.Cells(firstRow, "C").Value))
-        email      = Trim(CStr(ws.Cells(firstRow, "A").Value))
-        ${ccLine}
-        totalAmt   = GetGroupTotal(ws, groupItems)
-
-${thresholdLine}
-            groupContentHtml = GetGroupContentHtml(ws, groupItems, totalAmt)
-
-            Set olMail = olApp.CreateItem(0)
-            With olMail
-                .To = email
-                If ccEmail <> "" Then .CC = ccEmail
-                .Subject = "${subject.replace(/"/g, '""')}"
-                .HTMLBody = "<div style='font-family:Microsoft JhengHei,Arial,sans-serif;font-size:11pt;'>" & _
-               "${greetingVba}<br><br>" & _
-               groupContentHtml & "<br><br>" & _
-               "${bodyMainVba}<br><br>" & _
-${dueDateLine}               "${bodySignVba}<br>" & _
-               "</div>"
-                Call AttachPdfFilesForGroup(ws, groupItems, olMail, folderPath)
-                .Save
-            End With
-            createdCount = createdCount + 1
-        Else
-            skippedCount = skippedCount + 1
-        End If
-    Next k
-
-    MsgBox "完成！" & vbCrLf & _
-           "已建立草稿：" & createdCount & " 封" & vbCrLf & _
-           "跳過：" & skippedCount & " 組", vbInformation
-
-End Sub
-
-
-Function GetGroupTotal(ws As Worksheet, groupItems As Collection) As Double
-    Dim i As Long, r As Long, total As Double
-    For i = 1 To groupItems.Count
-        r = groupItems(i)
-        If IsNumeric(ws.Cells(r, "E").Value) Then
-            total = total + CDbl(ws.Cells(r, "E").Value)
-        End If
-    Next i
-    GetGroupTotal = total
-End Function
-
-
-Function GetGroupContentHtml(ws As Worksheet, groupItems As Collection, totalAmt As Double) As String
-    If groupItems.Count = 1 Then
-        GetGroupContentHtml = "您目前尚欠的逾期款為 " & _
-                              "<span style='color:red; font-size:16px; font-weight:bold;'>$" & _
-                              Format(totalAmt, "#,##0") & "</span>"
-    Else
-        GetGroupContentHtml = "下列是您目前尚欠的逾期款明細：<br><br>" & _
-                              BuildHtmlTable(ws, groupItems)
-    End If
-End Function
-
-
-Function BuildHtmlTable(ws As Worksheet, groupItems As Collection) As String
-    Dim html As String
-    Dim i As Long, r As Long, totalAmt As Double
-
-    html = "<table border='1' cellspacing='0' cellpadding='6' style='border-collapse:collapse; font-family:Microsoft JhengHei,Arial,sans-serif; font-size:11pt;'>" & _
-           "<tr style='background-color:#f2f2f2;'>" & _
-           "<th>Account</th><th>診所</th><th>醫師名</th><th>逾期款</th>" & _
-           "</tr>"
-
-    totalAmt = 0
-    For i = 1 To groupItems.Count
-        r = groupItems(i)
-        html = html & "<tr>" & _
-                      "<td>" & ws.Cells(r, "B").Value & "</td>" & _
-                      "<td>" & ws.Cells(r, "C").Value & "</td>" & _
-                      "<td>" & ws.Cells(r, "D").Value & "</td>" & _
-                      "<td align='right'>$" & Format(ws.Cells(r, "E").Value, "#,##0") & "</td>" & _
-                      "</tr>"
-        If IsNumeric(ws.Cells(r, "E").Value) Then
-            totalAmt = totalAmt + CDbl(ws.Cells(r, "E").Value)
-        End If
-    Next i
-
-    html = html & "<tr style='background-color:#fff2cc; font-weight:bold;'>" & _
-                  "<td colspan='3' align='center'>加總</td>" & _
-                  "<td align='right'>$" & Format(totalAmt, "#,##0") & "</td>" & _
-                  "</tr></table>"
-
-    BuildHtmlTable = html
-End Function
-
-
-Sub AttachPdfFilesForGroup(ws As Worksheet, groupItems As Collection, olMail As Object, folderPath As String)
-
-    Dim attachedDict As Object
-    Set attachedDict = CreateObject("Scripting.Dictionary")
-
-    Dim allFiles() As String
-    Dim fileCount As Long, f As String
-    fileCount = 0
-
-    f = Dir(folderPath & "\*.pdf")
-    Do While f <> ""
-        ReDim Preserve allFiles(fileCount)
-        allFiles(fileCount) = f
-        fileCount = fileCount + 1
-        f = Dir()
-    Loop
-
-    Dim i As Long, j As Long, r As Long
-    Dim accountValue As String, fullPath As String
-
-    For i = 1 To groupItems.Count
-        r = groupItems(i)
-        accountValue = Trim(CStr(ws.Cells(r, "B").Value))
-        If accountValue <> "" And fileCount > 0 Then
-            For j = 0 To fileCount - 1
-                If IsPdfMatch(allFiles(j), accountValue) Then
-                    fullPath = folderPath & "\" & allFiles(j)
-                    If Not attachedDict.Exists(fullPath) Then
-                        olMail.Attachments.Add fullPath
-                        attachedDict.Add fullPath, True
-                    End If
-                End If
-            Next j
-        End If
-    Next i
-
-End Sub
-
-
-Function IsPdfMatch(fileName As String, accountValue As String) As Boolean
-    Dim fd As String, ad As String
-    fd = RemoveLeadingZeros(DigitsOnly(LCase$(fileName)))
-    ad = RemoveLeadingZeros(DigitsOnly(LCase$(Trim$(CStr(accountValue)))))
-    If ad <> "" And fd <> "" Then
-        IsPdfMatch = (fd = ad)
-    Else
-        IsPdfMatch = False
-    End If
-End Function
-
-
-Function DigitsOnly(ByVal txt As String) As String
-    Dim i As Long, ch As String, result As String
-    For i = 1 To Len(txt)
-        ch = Mid$(txt, i, 1)
-        If ch Like "#" Then result = result & ch
-    Next i
-    DigitsOnly = result
-End Function
-
-
-Function RemoveLeadingZeros(ByVal txt As String) As String
-    Do While Len(txt) > 1 And Left$(txt, 1) = "0"
-        txt = Mid$(txt, 2)
-    Loop
-    RemoveLeadingZeros = txt
-End Function`;
+    const code = lines.join('\n');
 
     document.getElementById('outputBox').textContent = code;
     document.getElementById('outputCard').classList.add('visible');
