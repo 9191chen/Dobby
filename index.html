@@ -693,16 +693,22 @@ Finance</textarea>
     const useCC = document.getElementById('useCC').checked;
     const ccColumn = document.getElementById('ccColumn').value.trim().toUpperCase() || 'G';
 
-    // 處理內文：把變數取代後，每行轉成 VBA 字串串接
+    // 正確順序：先 escape 引號，再插入變數（變數裡的引號不能被 escape）
     function toVbaStr(raw, dueDay) {
       return raw
-        .replace(/{{醫師名}}/g, '" & doctorName & "')
-        .replace(/{{診所名}}/g, '" & clinicName & "')
-        .replace(/{{業務名}}/g, '" & salesName & "')
-        .replace(/{{金額}}/g, '" & Format(totalAmt, "#,##0") & "')
-        .replace(/{{截止日}}/g, dueDay)
         .split('\n')
-        .map(line => line.replace(/"/g, '""'))
+        .map(line => {
+          // 先把這行的引號 escape
+          let escaped = line.replace(/"/g, '""');
+          // 再把變數還原（變數裡的引號不用 escape，因為它們是 VBA 語法的一部分）
+          escaped = escaped
+            .replace(/\{\{醫師名\}\}/g, '" & doctorName & "')
+            .replace(/\{\{診所名\}\}/g, '" & clinicName & "')
+            .replace(/\{\{業務名\}\}/g, '" & salesName & "')
+            .replace(/\{\{金額\}\}/g, '" & Format(totalAmt, "#,##0") & "')
+            .replace(/\{\{截止日\}\}/g, dueDay);
+          return escaped;
+        })
         .join('<br>" & _\n               "');
     }
 
@@ -742,7 +748,7 @@ Sub 發信草稿_依設定產生()
     Dim groupContentHtml As String
 
     Dim folderPath As String
-    folderPath = "${pdfPath.replace(/"/g, '""')}"
+    folderPath = "${pdfPath.replace(/\\/g, '\\').replace(/"/g, '""')}"
 
     Set olApp = CreateObject("Outlook.Application")
 
