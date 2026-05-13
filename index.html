@@ -432,6 +432,14 @@
       <label>工作表名稱</label>
       <input type="text" id="sheetName" value="資料放這邊" style="max-width: 260px;" />
     </div>
+    <div class="field">
+      <label>PDF 比對欄位（用哪一欄的值去搜尋 PDF 檔名）</label>
+      <div class="sub-field-inline" style="margin:4px 0 0;">
+        <input type="text" id="pdfMatchColumn" value="B" style="width:55px;text-align:center;text-transform:uppercase;" maxlength="2" />
+        <label>欄</label>
+        <span style="font-size:12px;color:var(--text-hint);margin-left:4px;">（預設 B 欄，即 Account 欄）</span>
+      </div>
+    </div>
   </div>
 
   <!-- 信件設定 -->
@@ -469,15 +477,37 @@
       </div>
     </div>
 
+    <div class="field">
+      <label>收件人（To）信箱在 Excel 的第</label>
+      <div class="sub-field-inline" style="margin:4px 0 0;">
+        <input type="text" id="toColumn" value="A" style="width:55px;text-align:center;text-transform:uppercase;" maxlength="2" />
+        <label>欄</label>
+      </div>
+    </div>
+
     <div class="toggle-row" id="toggleCC" onclick="toggleOption('cc')">
       <input type="checkbox" id="useCC" />
       <label for="useCC">啟用 CC（副本收件人）</label>
     </div>
     <div class="sub-field" id="ccField">
-      <div class="sub-field-inline">
+      <div style="display:flex;gap:1.5rem;margin-bottom:0.75rem;">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--accent);font-weight:500;">
+          <input type="radio" name="ccMode" id="ccModeColumn" value="column" checked onchange="toggleCCMode()" style="accent-color:var(--accent);" />
+          從 Excel 欄位抓取
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--accent);font-weight:500;">
+          <input type="radio" name="ccMode" id="ccModeManual" value="manual" onchange="toggleCCMode()" style="accent-color:var(--accent);" />
+          手動輸入固定 mail
+        </label>
+      </div>
+      <div id="ccColumnField" class="sub-field-inline">
         <label>CC 信箱在 Excel 的第</label>
-        <input type="text" id="ccColumn" value="G" style="width: 55px; text-align:center; text-transform:uppercase;" maxlength="2" />
+        <input type="text" id="ccColumn" value="G" style="width:55px;text-align:center;text-transform:uppercase;" maxlength="2" />
         <label>欄</label>
+      </div>
+      <div id="ccManualField" class="sub-field-inline" style="display:none;">
+        <label>固定 CC 信箱</label>
+        <input type="text" id="ccManual" placeholder="example@email.com" style="width:260px;" />
       </div>
     </div>
   </div>
@@ -591,6 +621,7 @@ Finance</textarea>
   document.getElementById('useThreshold').addEventListener('click', e => e.stopPropagation());
   document.getElementById('useDueDate').addEventListener('click', e => e.stopPropagation());
   document.getElementById('useCC').addEventListener('click', e => e.stopPropagation());
+  document.querySelectorAll('input[name="ccMode"]').forEach(r => r.addEventListener('click', e => e.stopPropagation()));
 
   let templates = JSON.parse(localStorage.getItem('vbaMailTemplates') || '{}');
 
@@ -679,6 +710,12 @@ Finance</textarea>
     target.selectionStart = target.selectionEnd = s + v.length;
   }
 
+  function toggleCCMode() {
+    const isManual = document.getElementById('ccModeManual').checked;
+    document.getElementById('ccColumnField').style.display = isManual ? 'none' : 'flex';
+    document.getElementById('ccManualField').style.display = isManual ? 'flex' : 'none';
+  }
+
   function cleanPath(el) {
     // 移除前後空白、以及前後多餘的引號（右鍵複製路徑會帶引號）
     let v = el.value.trim();
@@ -698,7 +735,11 @@ Finance</textarea>
     const useDueDate = document.getElementById('useDueDate').checked;
     const dueDay = document.getElementById('dueDay').value || '25';
     const useCC = document.getElementById('useCC').checked;
+    const toColumn = document.getElementById('toColumn').value.trim().toUpperCase() || 'A';
+    const pdfMatchColumn = document.getElementById('pdfMatchColumn').value.trim().toUpperCase() || 'B';
     const ccColumn = document.getElementById('ccColumn').value.trim().toUpperCase() || 'G';
+    const ccManual = document.getElementById('ccManual').value.trim();
+    const ccIsManual = document.getElementById('ccModeManual').checked;
 
     // 把使用者輸入的文字轉成 VBA HTMLBody 的字串片段
     // 策略：每一行獨立處理，變數用特殊 placeholder 保護，最後再還原
@@ -801,11 +842,15 @@ Finance</textarea>
     lines.push('        doctorName = Trim(CStr(ws.Cells(firstRow, "D").Value))');
     lines.push('        salesName  = Trim(CStr(ws.Cells(firstRow, "F").Value))');
     lines.push('        clinicName = Trim(CStr(ws.Cells(firstRow, "C").Value))');
-    lines.push('        email      = Trim(CStr(ws.Cells(firstRow, "A").Value))');
+    lines.push('        email      = Trim(CStr(ws.Cells(firstRow, "' + toColumn + '").Value))');
     if (useCC) {
-      lines.push('        ccEmail    = Trim(CStr(ws.Cells(firstRow, "' + ccColumn + '").Value))');
+      if (ccIsManual) {
+        lines.push('        ccEmail    = "' + ccManual.replace(/"/g, '""') + '" ' 固定 CC');
+      } else {
+        lines.push('        ccEmail    = Trim(CStr(ws.Cells(firstRow, "' + ccColumn + '").Value))');
+      }
     } else {
-      lines.push("        ccEmail    = \"\" ' CC 未啟用");
+      lines.push('        ccEmail    = "" ' CC 未啟用');
     }
     lines.push('        totalAmt   = GetGroupTotal(ws, groupItems)');
     lines.push('');
@@ -925,7 +970,7 @@ Finance</textarea>
     lines.push('');
     lines.push('    For i = 1 To groupItems.Count');
     lines.push('        r = groupItems(i)');
-    lines.push('        accountValue = Trim(CStr(ws.Cells(r, "B").Value))');
+    lines.push('        accountValue = Trim(CStr(ws.Cells(r, "' + pdfMatchColumn + '").Value))');
     lines.push('        If accountValue <> "" And fileCount > 0 Then');
     lines.push('            For j = 0 To fileCount - 1');
     lines.push('                If IsPdfMatch(allFiles(j), accountValue) Then');
