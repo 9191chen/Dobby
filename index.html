@@ -493,11 +493,11 @@
     <div class="sub-field" id="ccField">
       <div style="display:flex;gap:1.5rem;margin-bottom:0.75rem;">
         <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--accent);font-weight:500;">
-          <input type="radio" name="ccMode" id="ccModeColumn" value="column" checked onchange="toggleCCMode()" style="accent-color:var(--accent);" />
+          <input type="radio" name="ccMode" id="ccModeColumn" value="column" checked style="accent-color:var(--accent);" />
           從 Excel 欄位抓取
         </label>
         <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--accent);font-weight:500;">
-          <input type="radio" name="ccMode" id="ccModeManual" value="manual" onchange="toggleCCMode()" style="accent-color:var(--accent);" />
+          <input type="radio" name="ccMode" id="ccModeManual" value="manual" style="accent-color:var(--accent);" />
           手動輸入固定 mail
         </label>
       </div>
@@ -622,7 +622,14 @@ Finance</textarea>
   document.getElementById('useThreshold').addEventListener('click', e => e.stopPropagation());
   document.getElementById('useDueDate').addEventListener('click', e => e.stopPropagation());
   document.getElementById('useCC').addEventListener('click', e => e.stopPropagation());
-  document.querySelectorAll('input[name="ccMode"]').forEach(r => r.addEventListener('click', e => e.stopPropagation()));
+  document.querySelectorAll('input[name="ccMode"]').forEach(r => {
+    r.addEventListener('click', e => e.stopPropagation());
+    r.addEventListener('change', function() {
+      const isManual = document.getElementById('ccModeManual').checked;
+      document.getElementById('ccColumnField').style.display = isManual ? 'none' : 'flex';
+      document.getElementById('ccManualField').style.display = isManual ? 'flex' : 'none';
+    });
+  });
 
   let templates = JSON.parse(localStorage.getItem('vbaMailTemplates') || '{}');
 
