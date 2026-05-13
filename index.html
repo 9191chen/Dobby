@@ -13,6 +13,7 @@
     --border: #e4e2dc; --border-strong: #ccc9c0;
     --text: #1a1916; --text-muted: #6b6860; --text-hint: #a09e99;
     --accent: #2d5a3d; --accent-light: #eaf2ec; --accent-hover: #234830;
+    --accent2: #3a5a8a; --accent2-light: #eaf0f8;
     --danger: #8b2020; --danger-light: #fdf0f0;
     --tag-bg: #f0ede8; --tag-hover: #e5e1da;
     --mono: 'JetBrains Mono', monospace; --sans: 'Noto Sans TC', sans-serif;
@@ -36,14 +37,24 @@
     font-family: var(--sans); font-size: 14px; color: var(--text); background: var(--surface);
     outline: none; transition: border-color 0.15s; -webkit-appearance: none;
   }
-  input[type=text]:focus, input[type=number]:focus, textarea:focus, select:focus {
-    border-color: var(--accent); box-shadow: 0 0 0 3px rgba(45,90,61,0.08);
-  }
+  input[type=text]:focus, input[type=number]:focus, textarea:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(45,90,61,0.08); }
   textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
   select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6860' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 32px; }
   .row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
   .row input.col { width: 60px; text-align: center; text-transform: uppercase; }
   .row span { font-size: 13px; color: var(--text-muted); }
+
+  /* 模式選擇 */
+  .mode-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+  .mode-tab { padding: 14px; border: 2px solid var(--border); border-radius: var(--radius-lg); cursor: pointer; transition: all 0.15s; background: var(--surface2); text-align: center; }
+  .mode-tab:hover { border-color: var(--border-strong); }
+  .mode-tab.active-normal { border-color: var(--accent2); background: var(--accent2-light); }
+  .mode-tab.active-overdue { border-color: var(--accent); background: var(--accent-light); }
+  .mode-tab .mode-icon { font-size: 22px; margin-bottom: 4px; }
+  .mode-tab .mode-name { font-size: 14px; font-weight: 600; color: var(--text-muted); }
+  .mode-tab .mode-desc { font-size: 12px; color: var(--text-hint); margin-top: 2px; }
+  .mode-tab.active-normal .mode-name { color: var(--accent2); }
+  .mode-tab.active-overdue .mode-name { color: var(--accent); }
 
   /* Toggle */
   .toggle-row { display: flex; align-items: center; gap: 10px; margin-bottom: 0.5rem; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface2); cursor: pointer; transition: border-color 0.15s; user-select: none; }
@@ -52,8 +63,6 @@
   .toggle-row input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--accent); flex-shrink: 0; pointer-events: none; }
   .toggle-row .tl { font-size: 13px; font-weight: 500; color: var(--text-muted); pointer-events: none; }
   .toggle-row.active .tl { color: var(--accent); }
-
-  /* Sub field */
   .sub { background: var(--accent-light); border: 1px solid #c5ddc9; border-radius: var(--radius); padding: 12px; margin-bottom: 0.5rem; display: none; }
   .sub.open { display: block; }
   .sub-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -62,8 +71,6 @@
   .sub-row input[type=number] { width: 110px; }
   .sub-row input.col { width: 60px; text-align: center; text-transform: uppercase; }
   .sub-row input.mail { width: 260px; }
-
-  /* Radio inside sub */
   .radio-group { display: flex; gap: 1.5rem; margin-bottom: 0.75rem; }
   .radio-group label { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--accent); margin: 0; }
   .radio-group input[type=radio] { width: 16px; height: 16px; accent-color: var(--accent); }
@@ -80,17 +87,15 @@
   .btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   .btn-danger { color: var(--danger); border-color: #e8c0c0; }
   .btn-danger:hover { background: var(--danger-light); }
-  .tbar { display: flex; gap: 8px; margin-bottom: 1rem; align-items: center; }
-  .tbar select { flex: 1; }
+  .tbar { display: flex; gap: 8px; margin-bottom: 1rem; align-items: center; flex-wrap: wrap; }
+  .tbar select { flex: 1; min-width: 120px; }
   .tags-label { font-size: 12px; color: var(--text-hint); margin-bottom: 6px; }
   .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1rem; }
   .tag { font-size: 12px; font-family: var(--mono); padding: 3px 10px; border-radius: 20px; background: var(--tag-bg); border: 1px solid var(--border); color: var(--text-muted); cursor: pointer; transition: all 0.12s; user-select: none; }
   .tag:hover { background: var(--tag-hover); border-color: var(--border-strong); color: var(--text); }
-
   .gen-btn { width: 100%; padding: 13px; background: var(--accent); color: white; border: none; border-radius: var(--radius-lg); font-family: var(--sans); font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.15s; margin-top: 0.5rem; }
   .gen-btn:hover { background: var(--accent-hover); }
   .gen-btn svg { width: 18px; height: 18px; stroke: white; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
   .out-card { display: none; margin-top: 1rem; }
   .out-card.open { display: block; }
   .out-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
@@ -100,6 +105,9 @@
   .copy-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   .hint { background: var(--accent-light); border: 1px solid #c5ddc9; border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: var(--accent); margin-top: 0.75rem; display: flex; gap: 8px; }
   .hint svg { width: 15px; height: 15px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; margin-top: 1px; }
+  .mode-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; margin-left: 8px; vertical-align: middle; }
+  .badge-normal { background: var(--accent2-light); color: var(--accent2); }
+  .badge-overdue { background: var(--accent-light); color: var(--accent); }
 </style>
 </head>
 <body>
@@ -110,6 +118,26 @@
 </header>
 
 <div class="container">
+
+  <!-- 模式選擇 -->
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      選擇模式
+    </div>
+    <div class="mode-tabs">
+      <div class="mode-tab" id="tabNormal" onclick="setMode('normal')">
+        <div class="mode-icon">📨</div>
+        <div class="mode-name">一般寄送</div>
+        <div class="mode-desc">寄附件給名單中的人<br>依收件人信箱分組</div>
+      </div>
+      <div class="mode-tab" id="tabOverdue" onclick="setMode('overdue')">
+        <div class="mode-icon">💰</div>
+        <div class="mode-name">逾期款通知</div>
+        <div class="mode-desc">含金額明細表格與加總<br>依醫師＋業務分組</div>
+      </div>
+    </div>
+  </div>
 
   <!-- 路徑設定 -->
   <div class="card">
@@ -132,8 +160,20 @@
     <div class="field">
       <label>PDF 比對欄位（用哪一欄的值搜尋 PDF 檔名）</label>
       <div class="row">
-        <input type="text" id="pdfMatchColumn" value="B" class="col" maxlength="2" />
+        <input type="text" id="pdfMatchColumn" value="B" class="col" maxlength="2" style="width:60px;text-align:center;text-transform:uppercase;" />
         <span>欄（預設 B 欄）</span>
+      </div>
+    </div>
+    <!-- 一般模式才顯示：比對方式 -->
+    <div class="field" id="pdfMatchModeField" style="display:none;">
+      <label>PDF 比對方式</label>
+      <div style="display:flex;gap:1.5rem;margin-top:4px;">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text-muted);margin:0;">
+          <input type="radio" name="pdfMatchMode" id="pdfMatchText" value="text" checked style="accent-color:var(--accent);" /> 文字包含（檔名含有該值即符合）
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text-muted);margin:0;">
+          <input type="radio" name="pdfMatchMode" id="pdfMatchNum" value="number" style="accent-color:var(--accent);" /> 數字比對（去前導零完全相符）
+        </label>
       </div>
     </div>
   </div>
@@ -151,22 +191,26 @@
     <div class="field">
       <label>收件人（To）信箱在 Excel 的第</label>
       <div class="row">
-        <input type="text" id="toColumn" value="A" class="col" maxlength="2" />
+        <input type="text" id="toColumn" value="A" class="col" maxlength="2" style="width:60px;text-align:center;text-transform:uppercase;" />
         <span>欄</span>
       </div>
     </div>
 
-    <div class="toggle-row" id="rowThreshold" onclick="toggleOpt('threshold')">
-      <input type="checkbox" id="useThreshold" /><span class="tl">啟用金額門檻篩選（低於門檻的組別不發信）</span>
-    </div>
-    <div class="sub" id="sfThreshold">
-      <div class="sub-row">
-        <label>逾期款超過</label>
-        <input type="number" id="threshold" value="10000" min="0" step="1000" />
-        <label>元才寄信</label>
+    <!-- 逾期款模式專屬：金額門檻 -->
+    <div id="thresholdSection">
+      <div class="toggle-row" id="rowThreshold" onclick="toggleOpt('threshold')">
+        <input type="checkbox" id="useThreshold" /><span class="tl">啟用金額門檻篩選（低於門檻的組別不發信）</span>
+      </div>
+      <div class="sub" id="sfThreshold">
+        <div class="sub-row">
+          <label>逾期款超過</label>
+          <input type="number" id="threshold" value="10000" min="0" step="1000" />
+          <label>元才寄信</label>
+        </div>
       </div>
     </div>
 
+    <!-- 截止日 -->
     <div class="toggle-row" id="rowDueDate" onclick="toggleOpt('dueDate')">
       <input type="checkbox" id="useDueDate" /><span class="tl">在信中加入繳款截止日提醒</span>
     </div>
@@ -178,6 +222,7 @@
       </div>
     </div>
 
+    <!-- CC -->
     <div class="toggle-row" id="rowCC" onclick="toggleOpt('cc')">
       <input type="checkbox" id="useCC" /><span class="tl">啟用 CC（副本收件人）</span>
     </div>
@@ -246,6 +291,7 @@ Finance</textarea>
         <div class="card-title" style="margin-bottom:0;">
           <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
           產生的 VBA 程式碼
+          <span class="mode-badge" id="modeBadge"></span>
         </div>
         <button class="copy-btn" id="copyBtn" onclick="copyVBA()">
           <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -263,14 +309,26 @@ Finance</textarea>
 </div>
 
 <script>
-// 路徑自動清理引號
+// ── 模式管理 ─────────────────────────────────────────
+let currentMode = 'overdue';
+
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('tabNormal').className  = 'mode-tab' + (mode === 'normal'  ? ' active-normal'  : '');
+  document.getElementById('tabOverdue').className = 'mode-tab' + (mode === 'overdue' ? ' active-overdue' : '');
+  document.getElementById('thresholdSection').style.display   = mode === 'overdue' ? 'block' : 'none';
+  document.getElementById('pdfMatchModeField').style.display  = mode === 'normal'  ? 'block' : 'none';
+}
+setMode('overdue');
+
+// ── 路徑自動清理引號 ──────────────────────────────────
 ['excelPath','pdfPath'].forEach(id => {
   document.getElementById(id).addEventListener('paste', function() {
     setTimeout(() => { this.value = this.value.trim().replace(/^"+|"+$/g, '').trim(); }, 0);
   });
 });
 
-// Toggle 展開/收合
+// ── Toggle 展開/收合 ──────────────────────────────────
 function toggleOpt(type) {
   const map = {
     threshold: ['useThreshold', 'sfThreshold', 'rowThreshold'],
@@ -287,7 +345,7 @@ function toggleOpt(type) {
   document.getElementById(id).addEventListener('click', e => e.stopPropagation());
 });
 
-// CC radio 切換
+// ── CC radio 切換 ────────────────────────────────────
 document.querySelectorAll('input[name="ccMode"]').forEach(radio => {
   radio.addEventListener('click', e => e.stopPropagation());
   radio.addEventListener('change', function() {
@@ -297,7 +355,7 @@ document.querySelectorAll('input[name="ccMode"]').forEach(radio => {
   });
 });
 
-// 變數插入
+// ── 變數插入 ─────────────────────────────────────────
 let lastFocused = null;
 ['greeting','bodyMain','bodySign'].forEach(id => {
   document.getElementById(id).addEventListener('focus', function() { lastFocused = this; });
@@ -310,11 +368,11 @@ function insertVar(v) {
   el.selectionStart = el.selectionEnd = s + v.length;
 }
 
-// 範本管理
+// ── 範本管理 ─────────────────────────────────────────
 let templates = JSON.parse(localStorage.getItem('vbaMailTemplates') || '{}');
 const defaults = {
-  '逾期款通知': { subject:'逾期款提醒通知', greeting:'{{醫師名}}醫師您好，', bodyMain:'您目前尚有逾期款 {{金額}} 元尚未繳清。\n\n若款項有任何問題，請再回信與我們聯繫，謝謝！', bodySign:'Best regards,\nFinance' },
-  '對帳單寄送': { subject:'對帳單通知', greeting:'{{醫師名}}醫師您好，', bodyMain:'附件為您最新一期的對帳單，請查收。\n\n若有任何問題，歡迎隨時與我們聯繫。', bodySign:'Best regards,\nFinance' },
+  '逾期款通知': { subject:'逾期款提醒通知', greeting:'{{醫師名}}醫師您好，', bodyMain:'您目前尚有逾期款尚未繳清。\n\n若款項有任何問題，請再回信與我們聯繫，謝謝！', bodySign:'Best regards,\nFinance' },
+  '對帳單寄送': { subject:'對帳單通知', greeting:'醫師您好，', bodyMain:'附件為您最新一期的對帳單，請查收。\n\n若有任何問題，歡迎隨時與我們聯繫。', bodySign:'Best regards,\nFinance' },
 };
 Object.keys(defaults).forEach(k => { if (!templates[k]) templates[k] = defaults[k]; });
 localStorage.setItem('vbaMailTemplates', JSON.stringify(templates));
@@ -357,7 +415,7 @@ function deleteTemplate() {
 }
 renderTemplates();
 
-// VBA 產生
+// ── VBA 字串處理 ──────────────────────────────────────
 function toVbaLines(raw, dueDay) {
   const VARS = [['{{醫師名}}','___DR___'],['{{診所名}}','___CL___'],['{{業務名}}','___SL___'],['{{金額}}','___AM___'],['{{截止日}}', dueDay]];
   const VBA  = {'___DR___':'\" & doctorName & \"','___CL___':'\" & clinicName & \"','___SL___':'\" & salesName & \"','___AM___':'\" & Format(totalAmt, \"#,##0\") & \"'};
@@ -373,23 +431,25 @@ function linesToVba(lines) {
   return lines.map(l => ind + '"' + l + '<br>"').join(' & _\n');
 }
 
+// ── 產生 VBA ─────────────────────────────────────────
 function generateVBA() {
-  const pdfPath      = document.getElementById('pdfPath').value.trim().replace(/^"+|"+$/g,'').trim();
-  const sheetName    = document.getElementById('sheetName').value.trim() || '資料放這邊';
-  const pdfCol       = document.getElementById('pdfMatchColumn').value.trim().toUpperCase() || 'B';
-  const subject      = document.getElementById('mailSubject').value.trim();
-  const toCol        = document.getElementById('toColumn').value.trim().toUpperCase() || 'A';
-  const useThr       = document.getElementById('useThreshold').checked;
-  const thr          = document.getElementById('threshold').value || '10000';
-  const useDue       = document.getElementById('useDueDate').checked;
-  const dueDay       = document.getElementById('dueDay').value || '25';
-  const useCC        = document.getElementById('useCC').checked;
-  const ccIsManual   = document.getElementById('ccModeManual').checked;
-  const ccCol        = document.getElementById('ccColumn').value.trim().toUpperCase() || 'G';
-  const ccManual     = document.getElementById('ccManual').value.trim();
-  const greeting     = document.getElementById('greeting').value.trim();
-  const bodyMain     = document.getElementById('bodyMain').value.trim();
-  const bodySign     = document.getElementById('bodySign').value.trim();
+  const pdfPath    = document.getElementById('pdfPath').value.trim().replace(/^"+|"+$/g,'').trim();
+  const sheetName  = document.getElementById('sheetName').value.trim() || '資料放這邊';
+  const pdfCol     = document.getElementById('pdfMatchColumn').value.trim().toUpperCase() || 'B';
+  const subject    = document.getElementById('mailSubject').value.trim();
+  const toCol      = document.getElementById('toColumn').value.trim().toUpperCase() || 'A';
+  const useThr     = document.getElementById('useThreshold').checked;
+  const thr        = document.getElementById('threshold').value || '10000';
+  const useDue     = document.getElementById('useDueDate').checked;
+  const dueDay     = document.getElementById('dueDay').value || '25';
+  const useCC      = document.getElementById('useCC').checked;
+  const ccIsManual = document.getElementById('ccModeManual').checked;
+  const ccCol      = document.getElementById('ccColumn').value.trim().toUpperCase() || 'G';
+  const ccManual   = document.getElementById('ccManual').value.trim();
+  const greeting   = document.getElementById('greeting').value.trim();
+  const bodyMain   = document.getElementById('bodyMain').value.trim();
+  const bodySign   = document.getElementById('bodySign').value.trim();
+  const pdfMatchMode = document.querySelector('input[name="pdfMatchMode"]:checked')?.value || 'text';
 
   const ind = '               ';
   const gVba = linesToVba(toVbaLines(greeting, dueDay));
@@ -398,11 +458,152 @@ function generateVBA() {
 
   const L = []; const p = s => L.push(s);
 
+  if (currentMode === 'normal') {
+    generateNormal(p, { pdfPath, sheetName, pdfCol, subject, toCol, useDue, dueDay, useCC, ccIsManual, ccCol, ccManual, gVba, bVba, sVba, ind, pdfMatchMode });
+  } else {
+    generateOverdue(p, { pdfPath, sheetName, pdfCol, subject, toCol, useThr, thr, useDue, dueDay, useCC, ccIsManual, ccCol, ccManual, gVba, bVba, sVba, ind });
+  }
+
+  document.getElementById('outputBox').textContent = L.join('\n');
+  document.getElementById('outputCard').classList.add('open');
+  const badge = document.getElementById('modeBadge');
+  badge.textContent = currentMode === 'normal' ? '一般寄送' : '逾期款通知';
+  badge.className = 'mode-badge ' + (currentMode === 'normal' ? 'badge-normal' : 'badge-overdue');
+  setTimeout(() => document.getElementById('outputCard').scrollIntoView({ behavior:'smooth', block:'start' }), 100);
+}
+
+function generateNormal(p, o) {
+  const { pdfPath, sheetName, pdfCol, subject, toCol, useDue, dueDay, useCC, ccIsManual, ccCol, ccManual, gVba, bVba, sVba, ind, pdfMatchMode } = o;
   p('Option Explicit'); p('');
-  p('Sub 發信草稿_依設定產生()'); p('');
+  p('Sub 發信草稿_一般寄送()'); p('');
   p('    Dim olApp As Object, olMail As Object');
   p('    Dim ws As Worksheet');
-  p('    Set ws = ThisWorkbook.Sheets("' + sheetName.replace(/"/g,'""') + '")'); p('');
+  p('    Set ws = ActiveWorkbook.Sheets("' + sheetName.replace(/"/g,'""') + '")'); p('');
+  p('    Dim lastRow As Long, i As Long');
+  p('    Dim groupDict As Object');
+  p('    Set groupDict = CreateObject("Scripting.Dictionary")'); p('');
+  p('    Dim email As String, ccEmail As String, groupKey As String');
+  p('    Dim k As Variant, firstRow As Long');
+  p('    Dim groupItems As Collection');
+  p('    Dim createdCount As Long'); p('');
+  p('    Dim folderPath As String');
+  p('    folderPath = "' + pdfPath.replace(/"/g,'""') + '"'); p('');
+  p('    Set olApp = CreateObject("Outlook.Application")'); p('');
+  p('    If Dir(folderPath, vbDirectory) = "" Then');
+  p('        MsgBox "找不到 PDF 資料夾：" & vbCrLf & folderPath, vbExclamation');
+  p('        Exit Sub');
+  p('    End If'); p('');
+  p('    lastRow = ws.Cells(ws.Rows.Count, "' + toCol + '").End(xlUp).Row'); p('');
+  p("    '== 依收件人信箱分組 ==");
+  p('    For i = 2 To lastRow');
+  p('        email = Trim(CStr(ws.Cells(i, "' + toCol + '").Value))');
+  p('        If email <> "" Then');
+  p('            If Not groupDict.Exists(email) Then');
+  p('                Set groupDict(email) = New Collection');
+  p('            End If');
+  p('            groupDict(email).Add i');
+  p('        End If');
+  p('    Next i'); p('');
+  p("    '== 建立草稿 ==");
+  p('    For Each k In groupDict.Keys');
+  p('        Set groupItems = groupDict(k)');
+  p('        firstRow = groupItems(1)');
+  p('        email = CStr(k)');
+  if (useCC) {
+    if (ccIsManual) { p('        ccEmail = "' + ccManual.replace(/"/g,'""') + '" \' 固定 CC'); }
+    else            { p('        ccEmail = Trim(CStr(ws.Cells(firstRow, "' + ccCol + '").Value))'); }
+  } else { p('        ccEmail = "" \' CC 未啟用'); }
+  p(''); p('        Set olMail = olApp.CreateItem(0)');
+  p('        With olMail');
+  p('            .To = email');
+  p('            If ccEmail <> "" Then .CC = ccEmail');
+  p('            .Subject = "' + subject.replace(/"/g,'""') + '"');
+  p('            .HTMLBody = "<div style=\'font-family:Microsoft JhengHei,Arial,sans-serif;font-size:11pt;\'>" & _');
+  p(gVba + ' & _');
+  p(ind + '"<br><br>" & _');
+  p(bVba + ' & _');
+  p(ind + '"<br><br>" & _');
+  if (useDue) { p(ind + '"請於本月' + dueDay + '號前完成繳款。<br>" & _'); }
+  p(sVba + ' & _');
+  p(ind + '"</div>"');
+  p('            Call AttachPdfFilesForGroup(ws, groupItems, olMail, folderPath)');
+  p('            .Save');
+  p('        End With');
+  p('        createdCount = createdCount + 1');
+  p('    Next k'); p('');
+  p('    MsgBox "完成！已建立草稿：" & createdCount & " 封", vbInformation'); p('');
+  p('End Sub'); p(''); p('');
+  p('Sub AttachPdfFilesForGroup(ws As Worksheet, groupItems As Collection, olMail As Object, folderPath As String)'); p('');
+  p('    Dim attachedDict As Object');
+  p('    Set attachedDict = CreateObject("Scripting.Dictionary")'); p('');
+  p('    Dim allFiles() As String');
+  p('    Dim fileCount As Long, f As String');
+  p('    fileCount = 0'); p('');
+  p('    f = Dir(folderPath & "\\*.pdf")');
+  p('    Do While f <> ""');
+  p('        ReDim Preserve allFiles(fileCount)');
+  p('        allFiles(fileCount) = f');
+  p('        fileCount = fileCount + 1');
+  p('        f = Dir()');
+  p('    Loop'); p('');
+  p('    If fileCount = 0 Then Exit Sub'); p('');
+  p('    Dim i As Long, j As Long, r As Long');
+  p('    Dim accountValue As String, fullPath As String'); p('');
+  p('    For i = 1 To groupItems.Count');
+  p('        r = groupItems(i)');
+  p('        accountValue = Trim(CStr(ws.Cells(r, "' + pdfCol + '").Value))');
+  p('        If accountValue <> "" Then');
+  p('            For j = 0 To fileCount - 1');
+  p('                If IsPdfMatch(allFiles(j), accountValue) Then');
+  p('                    fullPath = folderPath & "\\" & allFiles(j)');
+  p('                    If Not attachedDict.Exists(fullPath) Then');
+  p('                        olMail.Attachments.Add fullPath');
+  p('                        attachedDict.Add fullPath, True');
+  p('                    End If');
+  p('                End If');
+  p('            Next j');
+  p('        End If');
+  p('    Next i'); p('');
+  p('End Sub'); p(''); p('');
+  if (pdfMatchMode === 'text') {
+    p('Function IsPdfMatch(fileName As String, accountValue As String) As Boolean');
+    p('    IsPdfMatch = (InStr(1, LCase$(fileName), LCase$(Trim$(accountValue)), vbTextCompare) > 0)');
+    p('End Function');
+  } else {
+    p('Function IsPdfMatch(fileName As String, accountValue As String) As Boolean');
+    p('    Dim fd As String, ad As String');
+    p('    fd = RemoveLeadingZeros(DigitsOnly(LCase$(fileName)))');
+    p('    ad = RemoveLeadingZeros(DigitsOnly(LCase$(Trim$(CStr(accountValue)))))');
+    p('    If ad <> "" And fd <> "" Then');
+    p('        IsPdfMatch = (fd = ad)');
+    p('    Else');
+    p('        IsPdfMatch = False');
+    p('    End If');
+    p('End Function'); p(''); p('');
+    p('Function DigitsOnly(ByVal txt As String) As String');
+    p('    Dim i As Long, ch As String, result As String');
+    p('    For i = 1 To Len(txt)');
+    p('        ch = Mid$(txt, i, 1)');
+    p('        If ch Like "#" Then result = result & ch');
+    p('    Next i');
+    p('    DigitsOnly = result');
+    p('End Function'); p(''); p('');
+    p('Function RemoveLeadingZeros(ByVal txt As String) As String');
+    p('    Do While Len(txt) > 1 And Left$(txt, 1) = "0"');
+    p('        txt = Mid$(txt, 2)');
+    p('    Loop');
+    p('    RemoveLeadingZeros = txt');
+    p('End Function');
+  }
+}
+
+function generateOverdue(p, o) {
+  const { pdfPath, sheetName, pdfCol, subject, toCol, useThr, thr, useDue, dueDay, useCC, ccIsManual, ccCol, ccManual, gVba, bVba, sVba, ind } = o;
+  p('Option Explicit'); p('');
+  p('Sub 發信草稿_逾期款通知()'); p('');
+  p('    Dim olApp As Object, olMail As Object');
+  p('    Dim ws As Worksheet');
+  p('    Set ws = ActiveWorkbook.Sheets("' + sheetName.replace(/"/g,'""') + '")'); p('');
   p('    Dim lastRow As Long, i As Long');
   p('    Dim groupDict As Object');
   p('    Set groupDict = CreateObject("Scripting.Dictionary")'); p('');
@@ -475,7 +676,6 @@ function generateVBA() {
   p('           "已建立草稿：" & createdCount & " 封" & vbCrLf & _');
   p('           "跳過：" & skippedCount & " 組", vbInformation'); p('');
   p('End Sub'); p(''); p('');
-
   p('Function GetGroupTotal(ws As Worksheet, groupItems As Collection) As Double');
   p('    Dim i As Long, r As Long, total As Double');
   p('    For i = 1 To groupItems.Count');
@@ -486,7 +686,6 @@ function generateVBA() {
   p('    Next i');
   p('    GetGroupTotal = total');
   p('End Function'); p(''); p('');
-
   p('Function GetGroupContentHtml(ws As Worksheet, groupItems As Collection, totalAmt As Double) As String');
   p('    If groupItems.Count = 1 Then');
   p('        GetGroupContentHtml = "您目前尚欠的逾期款為 " & _');
@@ -497,10 +696,9 @@ function generateVBA() {
   p('                              BuildHtmlTable(ws, groupItems)');
   p('    End If');
   p('End Function'); p(''); p('');
-
   p('Function BuildHtmlTable(ws As Worksheet, groupItems As Collection) As String');
   p('    Dim html As String');
-  p('    Dim i As Long, r As Long, totalAmt As Double');  p('');
+  p('    Dim i As Long, r As Long, totalAmt As Double'); p('');
   p('    html = "<table border=\'1\' cellspacing=\'0\' cellpadding=\'6\' style=\'border-collapse:collapse; font-family:Microsoft JhengHei,Arial,sans-serif; font-size:11pt;\'>" & _');
   p('           "<tr style=\'background-color:#f2f2f2;\'>" & _');
   p('           "<th>Account</th><th>診所</th><th>醫師名</th><th>逾期款</th>" & _');
@@ -524,7 +722,6 @@ function generateVBA() {
   p('                  "</tr></table>"'); p('');
   p('    BuildHtmlTable = html');
   p('End Function'); p(''); p('');
-
   p('Sub AttachPdfFilesForGroup(ws As Worksheet, groupItems As Collection, olMail As Object, folderPath As String)'); p('');
   p('    Dim attachedDict As Object');
   p('    Set attachedDict = CreateObject("Scripting.Dictionary")'); p('');
@@ -538,12 +735,13 @@ function generateVBA() {
   p('        fileCount = fileCount + 1');
   p('        f = Dir()');
   p('    Loop'); p('');
+  p('    If fileCount = 0 Then Exit Sub'); p('');
   p('    Dim i As Long, j As Long, r As Long');
   p('    Dim accountValue As String, fullPath As String'); p('');
   p('    For i = 1 To groupItems.Count');
   p('        r = groupItems(i)');
   p('        accountValue = Trim(CStr(ws.Cells(r, "' + pdfCol + '").Value))');
-  p('        If accountValue <> "" And fileCount > 0 Then');
+  p('        If accountValue <> "" Then');
   p('            For j = 0 To fileCount - 1');
   p('                If IsPdfMatch(allFiles(j), accountValue) Then');
   p('                    fullPath = folderPath & "\\" & allFiles(j)');
@@ -556,7 +754,6 @@ function generateVBA() {
   p('        End If');
   p('    Next i'); p('');
   p('End Sub'); p(''); p('');
-
   p('Function IsPdfMatch(fileName As String, accountValue As String) As Boolean');
   p('    Dim fd As String, ad As String');
   p('    fd = RemoveLeadingZeros(DigitsOnly(LCase$(fileName)))');
@@ -567,7 +764,6 @@ function generateVBA() {
   p('        IsPdfMatch = False');
   p('    End If');
   p('End Function'); p(''); p('');
-
   p('Function DigitsOnly(ByVal txt As String) As String');
   p('    Dim i As Long, ch As String, result As String');
   p('    For i = 1 To Len(txt)');
@@ -576,17 +772,12 @@ function generateVBA() {
   p('    Next i');
   p('    DigitsOnly = result');
   p('End Function'); p(''); p('');
-
   p('Function RemoveLeadingZeros(ByVal txt As String) As String');
   p('    Do While Len(txt) > 1 And Left$(txt, 1) = "0"');
   p('        txt = Mid$(txt, 2)');
   p('    Loop');
   p('    RemoveLeadingZeros = txt');
   p('End Function');
-
-  document.getElementById('outputBox').textContent = L.join('\n');
-  document.getElementById('outputCard').classList.add('open');
-  setTimeout(() => document.getElementById('outputCard').scrollIntoView({ behavior:'smooth', block:'start' }), 100);
 }
 
 function copyVBA() {
