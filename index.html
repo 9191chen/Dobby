@@ -679,17 +679,6 @@ Finance</textarea>
     target.selectionStart = target.selectionEnd = s + v.length;
   }
 
-  function esc(str) { return str.replace(/"/g, '""'); }
-
-  function replaceVars(str, dueDay) {
-    return str
-      .replace(/{{醫師名}}/g, '" & doctorName & "')
-      .replace(/{{診所名}}/g, '" & clinicName & "')
-      .replace(/{{業務名}}/g, '" & salesName & "')
-      .replace(/{{金額}}/g, '" & Format(totalAmt, ""#,##0"") & "')
-      .replace(/{{截止日}}/g, dueDay);
-  }
-
   function generateVBA() {
     const pdfPath = document.getElementById('pdfPath').value.trim();
     const sheetName = document.getElementById('sheetName').value.trim() || '資料放這邊';
@@ -704,9 +693,22 @@ Finance</textarea>
     const useCC = document.getElementById('useCC').checked;
     const ccColumn = document.getElementById('ccColumn').value.trim().toUpperCase() || 'G';
 
-    const greetingVba = esc(replaceVars(greeting, dueDay));
-    const bodyMainVba = esc(replaceVars(bodyMain, dueDay)).split('\n').join('<br>" & _\n               "');
-    const bodySignVba = esc(replaceVars(bodySign, dueDay)).split('\n').join('<br>" & _\n               "');
+    // 處理內文：把變數取代後，每行轉成 VBA 字串串接
+    function toVbaStr(raw, dueDay) {
+      return raw
+        .replace(/{{醫師名}}/g, '" & doctorName & "')
+        .replace(/{{診所名}}/g, '" & clinicName & "')
+        .replace(/{{業務名}}/g, '" & salesName & "')
+        .replace(/{{金額}}/g, '" & Format(totalAmt, "#,##0") & "')
+        .replace(/{{截止日}}/g, dueDay)
+        .split('\n')
+        .map(line => line.replace(/"/g, '""'))
+        .join('<br>" & _\n               "');
+    }
+
+    const greetingVba = toVbaStr(greeting, dueDay);
+    const bodyMainVba = toVbaStr(bodyMain, dueDay);
+    const bodySignVba = toVbaStr(bodySign, dueDay);
 
     const thresholdLine = useThreshold
       ? `        If totalAmt > ${threshold} Then`
@@ -715,13 +717,17 @@ Finance</textarea>
     const dueDateLine = useDueDate
       ? `               "請於本月${dueDay}號前完成繳款。<br>" & _\n` : '';
 
+    const ccLine = useCC
+      ? `ccEmail    = Trim(CStr(ws.Cells(firstRow, "${ccColumn}").Value))`
+      : `ccEmail    = "" ' CC 未啟用`;
+
     const code = `Option Explicit
 
 Sub 發信草稿_依設定產生()
 
     Dim olApp As Object, olMail As Object
     Dim ws As Worksheet
-    Set ws = ThisWorkbook.Sheets("${esc(sheetName)}")
+    Set ws = ThisWorkbook.Sheets("${sheetName.replace(/"/g, '""')}")
 
     Dim lastRow As Long, i As Long
     Dim groupDict As Object
@@ -733,9 +739,10 @@ Sub 發信草稿_依設定產生()
     Dim groupItems As Collection
     Dim totalAmt As Double
     Dim createdCount As Long, skippedCount As Long
+    Dim groupContentHtml As String
 
     Dim folderPath As String
-    folderPath = "${esc(pdfPath)}"
+    folderPath = "${pdfPath.replace(/"/g, '""')}"
 
     Set olApp = CreateObject("Outlook.Application")
 
@@ -767,17 +774,20 @@ Sub 發信草稿_依設定產生()
         salesName  = Trim(CStr(ws.Cells(firstRow, "F").Value))
         clinicName = Trim(CStr(ws.Cells(firstRow, "C").Value))
         email      = Trim(CStr(ws.Cells(firstRow, "A").Value))
-        ${useCC ? `ccEmail    = Trim(CStr(ws.Cells(firstRow, "${ccColumn}").Value))` : `ccEmail    = "" ' CC 未啟用`}
+        ${ccLine}
         totalAmt   = GetGroupTotal(ws, groupItems)
 
 ${thresholdLine}
+            groupContentHtml = GetGroupContentHtml(ws, groupItems, totalAmt)
+
             Set olMail = olApp.CreateItem(0)
             With olMail
                 .To = email
                 If ccEmail <> "" Then .CC = ccEmail
-                .Subject = "${esc(subject)}"
+                .Subject = "${subject.replace(/"/g, '""')}"
                 .HTMLBody = "<div style='font-family:Microsoft JhengHei,Arial,sans-serif;font-size:11pt;'>" & _
                "${greetingVba}<br><br>" & _
+               groupContentHtml & "<br><br>" & _
                "${bodyMainVba}<br><br>" & _
 ${dueDateLine}               "${bodySignVba}<br>" & _
                "</div>"
@@ -809,6 +819,50 @@ Function GetGroupTotal(ws As Worksheet, groupItems As Collection) As Double
 End Function
 
 
+Function GetGroupContentHtml(ws As Worksheet, groupItems As Collection, totalAmt As Double) As String
+    If groupItems.Count = 1 Then
+        GetGroupContentHtml = "您目前尚欠的逾期款為 " & _
+                              "<span style='color:red; font-size:16px; font-weight:bold;'>$" & _
+                              Format(totalAmt, "#,##0") & "</span>"
+    Else
+        GetGroupContentHtml = "下列是您目前尚欠的逾期款明細：<br><br>" & _
+                              BuildHtmlTable(ws, groupItems)
+    End If
+End Function
+
+
+Function BuildHtmlTable(ws As Worksheet, groupItems As Collection) As String
+    Dim html As String
+    Dim i As Long, r As Long, totalAmt As Double
+
+    html = "<table border='1' cellspacing='0' cellpadding='6' style='border-collapse:collapse; font-family:Microsoft JhengHei,Arial,sans-serif; font-size:11pt;'>" & _
+           "<tr style='background-color:#f2f2f2;'>" & _
+           "<th>Account</th><th>診所</th><th>醫師名</th><th>逾期款</th>" & _
+           "</tr>"
+
+    totalAmt = 0
+    For i = 1 To groupItems.Count
+        r = groupItems(i)
+        html = html & "<tr>" & _
+                      "<td>" & ws.Cells(r, "B").Value & "</td>" & _
+                      "<td>" & ws.Cells(r, "C").Value & "</td>" & _
+                      "<td>" & ws.Cells(r, "D").Value & "</td>" & _
+                      "<td align='right'>$" & Format(ws.Cells(r, "E").Value, "#,##0") & "</td>" & _
+                      "</tr>"
+        If IsNumeric(ws.Cells(r, "E").Value) Then
+            totalAmt = totalAmt + CDbl(ws.Cells(r, "E").Value)
+        End If
+    Next i
+
+    html = html & "<tr style='background-color:#fff2cc; font-weight:bold;'>" & _
+                  "<td colspan='3' align='center'>加總</td>" & _
+                  "<td align='right'>$" & Format(totalAmt, "#,##0") & "</td>" & _
+                  "</tr></table>"
+
+    BuildHtmlTable = html
+End Function
+
+
 Sub AttachPdfFilesForGroup(ws As Worksheet, groupItems As Collection, olMail As Object, folderPath As String)
 
     Dim attachedDict As Object
@@ -818,7 +872,7 @@ Sub AttachPdfFilesForGroup(ws As Worksheet, groupItems As Collection, olMail As 
     Dim fileCount As Long, f As String
     fileCount = 0
 
-    f = Dir(folderPath & "\\*.pdf")
+    f = Dir(folderPath & "\*.pdf")
     Do While f <> ""
         ReDim Preserve allFiles(fileCount)
         allFiles(fileCount) = f
@@ -835,7 +889,7 @@ Sub AttachPdfFilesForGroup(ws As Worksheet, groupItems As Collection, olMail As 
         If accountValue <> "" And fileCount > 0 Then
             For j = 0 To fileCount - 1
                 If IsPdfMatch(allFiles(j), accountValue) Then
-                    fullPath = folderPath & "\\" & allFiles(j)
+                    fullPath = folderPath & "\" & allFiles(j)
                     If Not attachedDict.Exists(fullPath) Then
                         olMail.Attachments.Add fullPath
                         attachedDict.Add fullPath, True
