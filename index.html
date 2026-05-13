@@ -448,9 +448,18 @@
       <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       信件設定
     </div>
+
     <div class="field">
       <label>信件主旨</label>
       <input type="text" id="mailSubject" value="逾期款提醒通知" />
+    </div>
+
+    <div class="field">
+      <label>收件人（To）信箱在 Excel 的第</label>
+      <div class="sub-field-inline" style="margin:4px 0 0;">
+        <input type="text" id="toColumn" value="A" style="width:55px;text-align:center;text-transform:uppercase;" maxlength="2" />
+        <label>欄</label>
+      </div>
     </div>
 
     <div class="toggle-row" id="toggleThreshold" onclick="toggleOption('threshold')">
@@ -474,14 +483,6 @@
         <label>每月</label>
         <input type="number" id="dueDay" value="25" min="1" max="31" style="width: 70px;" />
         <label>號前完成繳款</label>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>收件人（To）信箱在 Excel 的第</label>
-      <div class="sub-field-inline" style="margin:4px 0 0;">
-        <input type="text" id="toColumn" value="A" style="width:55px;text-align:center;text-transform:uppercase;" maxlength="2" />
-        <label>欄</label>
       </div>
     </div>
 
