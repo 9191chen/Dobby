@@ -501,7 +501,7 @@
           手動輸入固定 mail
         </label>
       </div>
-      <div id="ccColumnField" class="sub-field-inline">
+      <div id="ccColumnField" class="sub-field-inline" style="display:none;">
         <label>CC 信箱在 Excel 的第</label>
         <input type="text" id="ccColumn" value="G" style="width:55px;text-align:center;text-transform:uppercase;" maxlength="2" />
         <label>欄</label>
@@ -616,6 +616,7 @@ Finance</textarea>
       cb.checked = !cb.checked;
       document.getElementById('ccField').classList.toggle('visible', cb.checked);
       document.getElementById('toggleCC').classList.toggle('active', cb.checked);
+      if (cb.checked) initCCMode();
     }
   }
 
@@ -722,6 +723,11 @@ Finance</textarea>
     const isManual = document.getElementById('ccModeManual').checked;
     document.getElementById('ccColumnField').style.display = isManual ? 'none' : 'flex';
     document.getElementById('ccManualField').style.display = isManual ? 'flex' : 'none';
+  }
+  
+  function initCCMode() {
+    document.getElementById('ccColumnField').style.display = 'flex';
+    document.getElementById('ccManualField').style.display = 'none';
   }
 
   function cleanPath(el) {
