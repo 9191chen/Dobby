@@ -8,403 +8,104 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --bg: #f5f4f1;
-    --surface: #ffffff;
-    --surface2: #f9f8f6;
-    --border: #e4e2dc;
-    --border-strong: #ccc9c0;
-    --text: #1a1916;
-    --text-muted: #6b6860;
-    --text-hint: #a09e99;
-    --accent: #2d5a3d;
-    --accent-light: #eaf2ec;
-    --accent-hover: #234830;
-    --danger: #8b2020;
-    --danger-light: #fdf0f0;
-    --tag-bg: #f0ede8;
-    --tag-hover: #e5e1da;
-    --mono: 'JetBrains Mono', monospace;
-    --sans: 'Noto Sans TC', sans-serif;
-    --radius: 8px;
-    --radius-lg: 12px;
+    --bg: #f5f4f1; --surface: #ffffff; --surface2: #f9f8f6;
+    --border: #e4e2dc; --border-strong: #ccc9c0;
+    --text: #1a1916; --text-muted: #6b6860; --text-hint: #a09e99;
+    --accent: #2d5a3d; --accent-light: #eaf2ec; --accent-hover: #234830;
+    --danger: #8b2020; --danger-light: #fdf0f0;
+    --tag-bg: #f0ede8; --tag-hover: #e5e1da;
+    --mono: 'JetBrains Mono', monospace; --sans: 'Noto Sans TC', sans-serif;
+    --radius: 8px; --radius-lg: 12px;
   }
-
-  body {
-    font-family: var(--sans);
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    font-size: 14px;
-    line-height: 1.6;
-  }
-
-  header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 2rem;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-
-  .logo-mark {
-    width: 28px;
-    height: 28px;
-    background: var(--accent);
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-
-  .logo-mark svg { width: 16px; height: 16px; fill: white; }
-
-  header h1 {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text);
-    letter-spacing: -0.01em;
-  }
-
-  header span {
-    font-size: 12px;
-    color: var(--text-hint);
-    margin-left: 4px;
-  }
-
-  .container {
-    max-width: 780px;
-    margin: 0 auto;
-    padding: 2rem 1.5rem 4rem;
-  }
-
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .card-title {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-hint);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .card-title svg {
-    width: 14px;
-    height: 14px;
-    stroke: var(--text-hint);
-    fill: none;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    flex-shrink: 0;
-  }
-
+  body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; line-height: 1.6; }
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 2rem; height: 56px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 10; }
+  .logo { width: 28px; height: 28px; background: var(--accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+  .logo svg { width: 16px; height: 16px; fill: white; }
+  header h1 { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+  header span { font-size: 12px; color: var(--text-hint); margin-left: 4px; }
+  .container { max-width: 780px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1rem; }
+  .card-title { font-size: 11px; font-weight: 600; color: var(--text-hint); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 6px; }
+  .card-title svg { width: 14px; height: 14px; stroke: var(--text-hint); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   .field { margin-bottom: 1rem; }
   .field:last-child { margin-bottom: 0; }
-
-  label {
-    display: block;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-muted);
-    margin-bottom: 5px;
-  }
-
+  label { display: block; font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 5px; }
   input[type=text], input[type=number], textarea, select {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    font-family: var(--sans);
-    font-size: 14px;
-    color: var(--text);
-    background: var(--surface);
-    outline: none;
-    transition: border-color 0.15s;
-    -webkit-appearance: none;
+    width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius);
+    font-family: var(--sans); font-size: 14px; color: var(--text); background: var(--surface);
+    outline: none; transition: border-color 0.15s; -webkit-appearance: none;
   }
-
   input[type=text]:focus, input[type=number]:focus, textarea:focus, select:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(45, 90, 61, 0.08);
+    border-color: var(--accent); box-shadow: 0 0 0 3px rgba(45,90,61,0.08);
   }
+  textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+  select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6860' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 32px; }
+  .row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+  .row input.col { width: 60px; text-align: center; text-transform: uppercase; }
+  .row span { font-size: 13px; color: var(--text-muted); }
 
-  textarea {
-    resize: vertical;
-    min-height: 90px;
-    line-height: 1.6;
-  }
-
-  select {
-    cursor: pointer;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6860' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    padding-right: 32px;
-  }
-
-  .path-row { display: flex; gap: 8px; }
-  .path-row input { flex: 1; }
-
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius);
-    font-family: var(--sans);
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-muted);
-    background: var(--surface);
-    cursor: pointer;
-    transition: all 0.15s;
-    white-space: nowrap;
-  }
-
-  .btn:hover { background: var(--surface2); border-color: var(--border-strong); color: var(--text); }
-  .btn:active { transform: scale(0.98); }
-
-  .btn svg {
-    width: 14px; height: 14px;
-    stroke: currentColor; fill: none;
-    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
-  }
-
-  .btn-danger { color: var(--danger); border-color: #e8c0c0; }
-  .btn-danger:hover { background: var(--danger-light); }
-
-  .toggle-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 0.75rem;
-    padding: 10px 12px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--surface2);
-    cursor: pointer;
-    transition: border-color 0.15s;
-  }
-
+  /* Toggle */
+  .toggle-row { display: flex; align-items: center; gap: 10px; margin-bottom: 0.5rem; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface2); cursor: pointer; transition: border-color 0.15s; user-select: none; }
   .toggle-row:hover { border-color: var(--border-strong); }
   .toggle-row.active { border-color: var(--accent); background: var(--accent-light); }
+  .toggle-row input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--accent); flex-shrink: 0; pointer-events: none; }
+  .toggle-row .tl { font-size: 13px; font-weight: 500; color: var(--text-muted); pointer-events: none; }
+  .toggle-row.active .tl { color: var(--accent); }
 
-  .toggle-row input[type=checkbox] {
-    width: 16px; height: 16px;
-    cursor: pointer;
-    accent-color: var(--accent);
-    flex-shrink: 0;
-  }
+  /* Sub field */
+  .sub { background: var(--accent-light); border: 1px solid #c5ddc9; border-radius: var(--radius); padding: 12px; margin-bottom: 0.5rem; display: none; }
+  .sub.open { display: block; }
+  .sub-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .sub-row label { margin: 0; color: var(--accent); font-size: 13px; white-space: nowrap; }
+  .sub-row input { border-color: #c5ddc9; background: white; }
+  .sub-row input[type=number] { width: 110px; }
+  .sub-row input.col { width: 60px; text-align: center; text-transform: uppercase; }
+  .sub-row input.mail { width: 260px; }
 
-  .toggle-row label {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-muted);
-    cursor: pointer;
-    margin: 0;
-  }
+  /* Radio inside sub */
+  .radio-group { display: flex; gap: 1.5rem; margin-bottom: 0.75rem; }
+  .radio-group label { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--accent); margin: 0; }
+  .radio-group input[type=radio] { width: 16px; height: 16px; accent-color: var(--accent); }
+  .rt { display: none; }
+  .rt.show { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .rt label { margin: 0; color: var(--accent); font-size: 13px; white-space: nowrap; }
+  .rt input { border-color: #c5ddc9; background: white; }
+  .rt input.col { width: 60px; text-align: center; text-transform: uppercase; }
+  .rt input.mail { width: 260px; }
 
-  .toggle-row.active label { color: var(--accent); }
+  /* Buttons */
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius); font-family: var(--sans); font-size: 13px; font-weight: 500; color: var(--text-muted); background: var(--surface); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .btn:hover { background: var(--surface2); color: var(--text); }
+  .btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .btn-danger { color: var(--danger); border-color: #e8c0c0; }
+  .btn-danger:hover { background: var(--danger-light); }
+  .tbar { display: flex; gap: 8px; margin-bottom: 1rem; align-items: center; }
+  .tbar select { flex: 1; }
+  .tags-label { font-size: 12px; color: var(--text-hint); margin-bottom: 6px; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1rem; }
+  .tag { font-size: 12px; font-family: var(--mono); padding: 3px 10px; border-radius: 20px; background: var(--tag-bg); border: 1px solid var(--border); color: var(--text-muted); cursor: pointer; transition: all 0.12s; user-select: none; }
+  .tag:hover { background: var(--tag-hover); border-color: var(--border-strong); color: var(--text); }
 
-  .sub-field {
-    background: var(--accent-light);
-    border: 1px solid #c5ddc9;
-    border-radius: var(--radius);
-    padding: 12px;
-    margin-bottom: 0.75rem;
-    display: none;
-  }
+  .gen-btn { width: 100%; padding: 13px; background: var(--accent); color: white; border: none; border-radius: var(--radius-lg); font-family: var(--sans); font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.15s; margin-top: 0.5rem; }
+  .gen-btn:hover { background: var(--accent-hover); }
+  .gen-btn svg { width: 18px; height: 18px; stroke: white; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-  .sub-field.visible { display: block; }
-
-  .sub-field-inline {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .sub-field-inline label {
-    margin: 0;
-    white-space: nowrap;
-    color: var(--accent);
-    font-size: 13px;
-  }
-
-  .sub-field-inline input {
-    width: 120px;
-    border-color: #c5ddc9;
-    background: white;
-  }
-
-  .template-bar {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 1rem;
-    align-items: center;
-  }
-
-  .template-bar select { flex: 1; }
-
-  .tags-label {
-    font-size: 12px;
-    color: var(--text-hint);
-    margin-bottom: 6px;
-  }
-
-  .tag-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 1rem;
-  }
-
-  .tag {
-    font-size: 12px;
-    font-family: var(--mono);
-    padding: 3px 10px;
-    border-radius: 20px;
-    background: var(--tag-bg);
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.12s;
-    user-select: none;
-  }
-
-  .tag:hover {
-    background: var(--tag-hover);
-    border-color: var(--border-strong);
-    color: var(--text);
-  }
-
-  .generate-btn {
-    width: 100%;
-    padding: 13px;
-    background: var(--accent);
-    color: white;
-    border: none;
-    border-radius: var(--radius-lg);
-    font-family: var(--sans);
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.15s;
-    letter-spacing: -0.01em;
-    margin-top: 0.5rem;
-  }
-
-  .generate-btn:hover { background: var(--accent-hover); }
-  .generate-btn:active { transform: scale(0.99); }
-
-  .generate-btn svg {
-    width: 18px; height: 18px;
-    stroke: white; fill: none;
-    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
-  }
-
-  .output-card {
-    display: none;
-    margin-top: 1rem;
-  }
-
-  .output-card.visible { display: block; }
-
-  .output-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 0.75rem;
-  }
-
-  .output-box {
-    background: #1a1916;
-    color: #d4d0c8;
-    border-radius: var(--radius);
-    padding: 1rem;
-    font-family: var(--mono);
-    font-size: 12.5px;
-    line-height: 1.7;
-    white-space: pre;
-    overflow-x: auto;
-    max-height: 400px;
-    overflow-y: auto;
-    border: 1px solid #333;
-  }
-
-  .copy-btn {
-    background: #333;
-    color: #d4d0c8;
-    border: 1px solid #444;
-    border-radius: var(--radius);
-    padding: 6px 14px;
-    font-family: var(--sans);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.15s;
-  }
-
+  .out-card { display: none; margin-top: 1rem; }
+  .out-card.open { display: block; }
+  .out-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+  .out-box { background: #1a1916; color: #d4d0c8; border-radius: var(--radius); padding: 1rem; font-family: var(--mono); font-size: 12.5px; line-height: 1.7; white-space: pre; overflow-x: auto; max-height: 400px; overflow-y: auto; border: 1px solid #333; }
+  .copy-btn { background: #333; color: #d4d0c8; border: 1px solid #444; border-radius: var(--radius); padding: 6px 14px; font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; }
   .copy-btn:hover { background: #444; }
   .copy-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
-  .hint-box {
-    background: var(--accent-light);
-    border: 1px solid #c5ddc9;
-    border-radius: var(--radius);
-    padding: 10px 14px;
-    font-size: 13px;
-    color: var(--accent);
-    margin-top: 0.75rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .hint-box svg { width: 15px; height: 15px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; margin-top: 1px; }
-
-  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-
-  @media (max-width: 560px) {
-    .grid2 { grid-template-columns: 1fr; }
-    .path-row { flex-direction: column; }
-    header h1 { font-size: 14px; }
-    .container { padding: 1rem 1rem 3rem; }
-  }
+  .hint { background: var(--accent-light); border: 1px solid #c5ddc9; border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: var(--accent); margin-top: 0.75rem; display: flex; gap: 8px; }
+  .hint svg { width: 15px; height: 15px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; margin-top: 1px; }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo-mark">
-    <svg viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM17 14v6M14 17h6"/></svg>
-  </div>
+  <div class="logo"><svg viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM17 14v6M14 17h6"/></svg></div>
   <h1>VBA 信件草稿產生器 <span>for Outlook</span></h1>
 </header>
 
@@ -418,26 +119,21 @@
     </div>
     <div class="field">
       <label>Excel 檔案路徑</label>
-      <div class="path-row">
-        <input type="text" id="excelPath" placeholder="例：C:\Users\你的名字\Desktop\逾期清單.xlsx" oninput="cleanPath(this)" onpaste="setTimeout(()=>cleanPath(this),0)" />
-      </div>
+      <input type="text" id="excelPath" placeholder="例：C:\Users\你的名字\Desktop\逾期清單.xlsx" />
     </div>
     <div class="field">
       <label>PDF 資料夾路徑</label>
-      <div class="path-row">
-        <input type="text" id="pdfPath" placeholder="例：C:\Users\你的名字\Desktop\對帳單" oninput="cleanPath(this)" onpaste="setTimeout(()=>cleanPath(this),0)" />
-      </div>
+      <input type="text" id="pdfPath" placeholder="例：C:\Users\你的名字\Desktop\對帳單" />
     </div>
     <div class="field">
       <label>工作表名稱</label>
-      <input type="text" id="sheetName" value="資料放這邊" style="max-width: 260px;" />
+      <input type="text" id="sheetName" value="資料放這邊" style="max-width:260px;" />
     </div>
     <div class="field">
-      <label>PDF 比對欄位（用哪一欄的值去搜尋 PDF 檔名）</label>
-      <div class="sub-field-inline" style="margin:4px 0 0;">
-        <input type="text" id="pdfMatchColumn" value="B" style="width:55px;text-align:center;text-transform:uppercase;" maxlength="2" />
-        <label>欄</label>
-        <span style="font-size:12px;color:var(--text-hint);margin-left:4px;">（預設 B 欄，即 Account 欄）</span>
+      <label>PDF 比對欄位（用哪一欄的值搜尋 PDF 檔名）</label>
+      <div class="row">
+        <input type="text" id="pdfMatchColumn" value="B" class="col" maxlength="2" />
+        <span>欄（預設 B 欄）</span>
       </div>
     </div>
   </div>
@@ -448,96 +144,72 @@
       <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       信件設定
     </div>
-
     <div class="field">
       <label>信件主旨</label>
       <input type="text" id="mailSubject" value="逾期款提醒通知" />
     </div>
-
     <div class="field">
       <label>收件人（To）信箱在 Excel 的第</label>
-      <div class="sub-field-inline" style="margin:4px 0 0;">
-        <input type="text" id="toColumn" value="A" style="width:55px;text-align:center;text-transform:uppercase;" maxlength="2" />
-        <label>欄</label>
+      <div class="row">
+        <input type="text" id="toColumn" value="A" class="col" maxlength="2" />
+        <span>欄</span>
       </div>
     </div>
 
-    <div class="toggle-row" id="toggleThreshold" onclick="toggleOption('threshold')">
-      <input type="checkbox" id="useThreshold" />
-      <label for="useThreshold">啟用金額門檻篩選（低於門檻的組別不發信）</label>
+    <div class="toggle-row" id="rowThreshold" onclick="toggleOpt('threshold')">
+      <input type="checkbox" id="useThreshold" /><span class="tl">啟用金額門檻篩選（低於門檻的組別不發信）</span>
     </div>
-    <div class="sub-field" id="thresholdField">
-      <div class="sub-field-inline">
+    <div class="sub" id="sfThreshold">
+      <div class="sub-row">
         <label>逾期款超過</label>
         <input type="number" id="threshold" value="10000" min="0" step="1000" />
         <label>元才寄信</label>
       </div>
     </div>
 
-    <div class="toggle-row" id="toggleDueDate" onclick="toggleOption('dueDate')">
-      <input type="checkbox" id="useDueDate" />
-      <label for="useDueDate">在信中加入繳款截止日提醒</label>
+    <div class="toggle-row" id="rowDueDate" onclick="toggleOpt('dueDate')">
+      <input type="checkbox" id="useDueDate" /><span class="tl">在信中加入繳款截止日提醒</span>
     </div>
-    <div class="sub-field" id="dueDateField">
-      <div class="sub-field-inline">
+    <div class="sub" id="sfDueDate">
+      <div class="sub-row">
         <label>每月</label>
-        <input type="number" id="dueDay" value="25" min="1" max="31" style="width: 70px;" />
+        <input type="number" id="dueDay" value="25" min="1" max="31" style="width:70px;" />
         <label>號前完成繳款</label>
       </div>
     </div>
 
-    <div class="toggle-row" id="toggleCC" onclick="toggleOption('cc')">
-      <input type="checkbox" id="useCC" />
-      <label for="useCC">啟用 CC（副本收件人）</label>
+    <div class="toggle-row" id="rowCC" onclick="toggleOpt('cc')">
+      <input type="checkbox" id="useCC" /><span class="tl">啟用 CC（副本收件人）</span>
     </div>
-    <div class="sub-field" id="ccField">
-      <div style="display:flex;gap:1.5rem;margin-bottom:0.75rem;">
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--accent);font-weight:500;">
-          <input type="radio" name="ccMode" id="ccModeColumn" value="column" checked style="accent-color:var(--accent);" />
-          從 Excel 欄位抓取
-        </label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--accent);font-weight:500;">
-          <input type="radio" name="ccMode" id="ccModeManual" value="manual" style="accent-color:var(--accent);" />
-          手動輸入固定 mail
-        </label>
+    <div class="sub" id="sfCC">
+      <div class="radio-group">
+        <label><input type="radio" name="ccMode" id="ccModeColumn" value="column" checked /> 從 Excel 欄位抓取</label>
+        <label><input type="radio" name="ccMode" id="ccModeManual" value="manual" /> 手動輸入固定 mail</label>
       </div>
-      <div id="ccColumnField" class="sub-field-inline" style="display:none;">
+      <div class="rt show" id="rtColumn">
         <label>CC 信箱在 Excel 的第</label>
-        <input type="text" id="ccColumn" value="G" style="width:55px;text-align:center;text-transform:uppercase;" maxlength="2" />
+        <input type="text" id="ccColumn" value="G" class="col" maxlength="2" />
         <label>欄</label>
       </div>
-      <div id="ccManualField" class="sub-field-inline" style="display:none;">
+      <div class="rt" id="rtManual">
         <label>固定 CC 信箱</label>
-        <input type="text" id="ccManual" placeholder="example@email.com" style="width:260px;" />
+        <input type="text" id="ccManual" placeholder="example@email.com" class="mail" />
       </div>
     </div>
   </div>
 
-  <!-- 內文編輯 -->
+  <!-- 信件內文 -->
   <div class="card">
     <div class="card-title">
       <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
       信件內文
     </div>
-
-    <div class="template-bar">
-      <select id="templateSelect">
-        <option value="">— 選擇範本 —</option>
-      </select>
-      <button class="btn" onclick="saveTemplate()">
-        <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-        儲存範本
-      </button>
-      <button class="btn" onclick="renameTemplate()">
-        <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        改名
-      </button>
-      <button class="btn btn-danger" onclick="deleteTemplate()">
-        <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-        刪除
-      </button>
+    <div class="tbar">
+      <select id="templateSelect"><option value="">— 選擇範本 —</option></select>
+      <button class="btn" onclick="saveTemplate()"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>儲存範本</button>
+      <button class="btn" onclick="renameTemplate()"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>改名</button>
+      <button class="btn btn-danger" onclick="deleteTemplate()"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>刪除</button>
     </div>
-
     <p class="tags-label">點擊插入變數：</p>
     <div class="tag-row">
       <span class="tag" onclick="insertVar('{{醫師名}}')">{{醫師名}}</span>
@@ -546,7 +218,6 @@
       <span class="tag" onclick="insertVar('{{截止日}}')">{{截止日}}</span>
       <span class="tag" onclick="insertVar('{{業務名}}')">{{業務名}}</span>
     </div>
-
     <div class="field">
       <label>開頭稱呼</label>
       <input type="text" id="greeting" value="{{醫師名}}醫師您好，" />
@@ -564,16 +235,15 @@ Finance</textarea>
     </div>
   </div>
 
-  <button class="generate-btn" onclick="generateVBA()">
+  <button class="gen-btn" onclick="generateVBA()">
     <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
     產生 VBA 程式碼
   </button>
 
-  <!-- 輸出 -->
-  <div class="output-card" id="outputCard">
-    <div class="card" style="margin-bottom: 0;">
-      <div class="output-header">
-        <div class="card-title" style="margin-bottom: 0;">
+  <div class="out-card" id="outputCard">
+    <div class="card" style="margin-bottom:0;">
+      <div class="out-head">
+        <div class="card-title" style="margin-bottom:0;">
           <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
           產生的 VBA 程式碼
         </div>
@@ -582,8 +252,8 @@ Finance</textarea>
           複製
         </button>
       </div>
-      <div class="output-box" id="outputBox"></div>
-      <div class="hint-box">
+      <div class="out-box" id="outputBox"></div>
+      <div class="hint">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         將上方程式碼全選複製，在 Excel 中按 <strong>Alt + F11</strong> 開啟 VBA 編輯器，貼入後執行即可。
       </div>
@@ -593,464 +263,339 @@ Finance</textarea>
 </div>
 
 <script>
-  let lastFocused = null;
-  ['greeting','bodyMain','bodySign'].forEach(id => {
-    document.getElementById(id).addEventListener('focus', function() {
-      lastFocused = this;
-    });
+// 路徑自動清理引號
+['excelPath','pdfPath'].forEach(id => {
+  document.getElementById(id).addEventListener('paste', function() {
+    setTimeout(() => { this.value = this.value.trim().replace(/^"+|"+$/g, '').trim(); }, 0);
   });
+});
 
-  function toggleOption(type) {
-    if (type === 'threshold') {
-      const cb = document.getElementById('useThreshold');
-      cb.checked = !cb.checked;
-      document.getElementById('thresholdField').classList.toggle('visible', cb.checked);
-      document.getElementById('toggleThreshold').classList.toggle('active', cb.checked);
-    } else if (type === 'dueDate') {
-      const cb = document.getElementById('useDueDate');
-      cb.checked = !cb.checked;
-      document.getElementById('dueDateField').classList.toggle('visible', cb.checked);
-      document.getElementById('toggleDueDate').classList.toggle('active', cb.checked);
-    } else if (type === 'cc') {
-      const cb = document.getElementById('useCC');
-      cb.checked = !cb.checked;
-      document.getElementById('ccField').classList.toggle('visible', cb.checked);
-      document.getElementById('toggleCC').classList.toggle('active', cb.checked);
-      if (cb.checked) initCCMode();
-    }
-  }
-
-  document.getElementById('useThreshold').addEventListener('click', e => e.stopPropagation());
-  document.getElementById('useDueDate').addEventListener('click', e => e.stopPropagation());
-  document.getElementById('useCC').addEventListener('click', e => e.stopPropagation());
-  document.querySelectorAll('input[name="ccMode"]').forEach(r => {
-    r.addEventListener('click', e => e.stopPropagation());
-    r.addEventListener('change', function() {
-      const isManual = document.getElementById('ccModeManual').checked;
-      document.getElementById('ccColumnField').style.display = isManual ? 'none' : 'flex';
-      document.getElementById('ccManualField').style.display = isManual ? 'flex' : 'none';
-    });
-  });
-
-  let templates = JSON.parse(localStorage.getItem('vbaMailTemplates') || '{}');
-
-  const defaults = {
-    '逾期款通知': {
-      subject: '逾期款提醒通知',
-      greeting: '{{醫師名}}醫師您好，',
-      bodyMain: '您目前尚有逾期款 {{金額}} 元尚未繳清。\n\n若款項有任何問題，請再回信與我們聯繫，謝謝！',
-      bodySign: 'Best regards,\nFinance'
-    },
-    '對帳單寄送': {
-      subject: '對帳單通知',
-      greeting: '{{醫師名}}醫師您好，',
-      bodyMain: '附件為您最新一期的對帳單，請查收。\n\n若有任何問題，歡迎隨時與我們聯繫。',
-      bodySign: 'Best regards,\nFinance'
-    }
+// Toggle 展開/收合
+function toggleOpt(type) {
+  const map = {
+    threshold: ['useThreshold', 'sfThreshold', 'rowThreshold'],
+    dueDate:   ['useDueDate',   'sfDueDate',   'rowDueDate'],
+    cc:        ['useCC',        'sfCC',        'rowCC'],
   };
+  const [cbId, sfId, rowId] = map[type];
+  const cb = document.getElementById(cbId);
+  cb.checked = !cb.checked;
+  document.getElementById(sfId).classList.toggle('open', cb.checked);
+  document.getElementById(rowId).classList.toggle('active', cb.checked);
+}
+['useThreshold','useDueDate','useCC'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => e.stopPropagation());
+});
 
-  Object.keys(defaults).forEach(k => { if (!templates[k]) templates[k] = defaults[k]; });
-  localStorage.setItem('vbaMailTemplates', JSON.stringify(templates));
-
-  function renderTemplates() {
-    const sel = document.getElementById('templateSelect');
-    const cur = sel.value;
-    sel.innerHTML = '<option value="">— 選擇範本 —</option>';
-    Object.keys(templates).forEach(name => {
-      const opt = document.createElement('option');
-      opt.value = name; opt.textContent = name;
-      sel.appendChild(opt);
-    });
-    if (cur && templates[cur]) sel.value = cur;
-  }
-
-  document.getElementById('templateSelect').addEventListener('change', function() {
-    const t = templates[this.value];
-    if (!t) return;
-    if (t.subject) document.getElementById('mailSubject').value = t.subject;
-    if (t.greeting) document.getElementById('greeting').value = t.greeting;
-    if (t.bodyMain) document.getElementById('bodyMain').value = t.bodyMain;
-    if (t.bodySign) document.getElementById('bodySign').value = t.bodySign;
+// CC radio 切換
+document.querySelectorAll('input[name="ccMode"]').forEach(radio => {
+  radio.addEventListener('click', e => e.stopPropagation());
+  radio.addEventListener('change', function() {
+    const isManual = this.value === 'manual';
+    document.getElementById('rtColumn').classList.toggle('show', !isManual);
+    document.getElementById('rtManual').classList.toggle('show', isManual);
   });
+});
 
-  function saveTemplate() {
-    const name = prompt('範本名稱（例：逾期信、對帳單通知）：');
-    if (!name || !name.trim()) return;
-    templates[name.trim()] = {
-      subject: document.getElementById('mailSubject').value,
-      greeting: document.getElementById('greeting').value,
-      bodyMain: document.getElementById('bodyMain').value,
-      bodySign: document.getElementById('bodySign').value
-    };
-    localStorage.setItem('vbaMailTemplates', JSON.stringify(templates));
-    renderTemplates();
-    document.getElementById('templateSelect').value = name.trim();
-  }
+// 變數插入
+let lastFocused = null;
+['greeting','bodyMain','bodySign'].forEach(id => {
+  document.getElementById(id).addEventListener('focus', function() { lastFocused = this; });
+});
+function insertVar(v) {
+  const el = lastFocused || document.getElementById('bodyMain');
+  el.focus();
+  const s = el.selectionStart, e = el.selectionEnd;
+  el.value = el.value.slice(0, s) + v + el.value.slice(e);
+  el.selectionStart = el.selectionEnd = s + v.length;
+}
 
-  function renameTemplate() {
-    const oldName = document.getElementById('templateSelect').value;
-    if (!oldName) { alert('請先選擇一個範本'); return; }
-    const newName = prompt('請輸入新的範本名稱：', oldName);
-    if (!newName || !newName.trim()) return;
-    if (newName.trim() === oldName) return;
-    if (templates[newName.trim()]) { alert('已有同名範本，請換個名字'); return; }
-    templates[newName.trim()] = templates[oldName];
-    delete templates[oldName];
-    localStorage.setItem('vbaMailTemplates', JSON.stringify(templates));
-    renderTemplates();
-    document.getElementById('templateSelect').value = newName.trim();
-  }
+// 範本管理
+let templates = JSON.parse(localStorage.getItem('vbaMailTemplates') || '{}');
+const defaults = {
+  '逾期款通知': { subject:'逾期款提醒通知', greeting:'{{醫師名}}醫師您好，', bodyMain:'您目前尚有逾期款 {{金額}} 元尚未繳清。\n\n若款項有任何問題，請再回信與我們聯繫，謝謝！', bodySign:'Best regards,\nFinance' },
+  '對帳單寄送': { subject:'對帳單通知', greeting:'{{醫師名}}醫師您好，', bodyMain:'附件為您最新一期的對帳單，請查收。\n\n若有任何問題，歡迎隨時與我們聯繫。', bodySign:'Best regards,\nFinance' },
+};
+Object.keys(defaults).forEach(k => { if (!templates[k]) templates[k] = defaults[k]; });
+localStorage.setItem('vbaMailTemplates', JSON.stringify(templates));
 
-  function deleteTemplate() {
-    const name = document.getElementById('templateSelect').value;
-    if (!name) { alert('請先選擇一個範本'); return; }
-    if (!confirm('確定刪除範本「' + name + '」？')) return;
-    delete templates[name];
-    localStorage.setItem('vbaMailTemplates', JSON.stringify(templates));
-    renderTemplates();
-  }
+function renderTemplates() {
+  const sel = document.getElementById('templateSelect');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">— 選擇範本 —</option>';
+  Object.keys(templates).forEach(name => {
+    const opt = document.createElement('option');
+    opt.value = name; opt.textContent = name; sel.appendChild(opt);
+  });
+  if (cur && templates[cur]) sel.value = cur;
+}
+document.getElementById('templateSelect').addEventListener('change', function() {
+  const t = templates[this.value]; if (!t) return;
+  if (t.subject)  document.getElementById('mailSubject').value = t.subject;
+  if (t.greeting) document.getElementById('greeting').value    = t.greeting;
+  if (t.bodyMain) document.getElementById('bodyMain').value    = t.bodyMain;
+  if (t.bodySign) document.getElementById('bodySign').value    = t.bodySign;
+});
+function saveTemplate() {
+  const name = prompt('範本名稱：'); if (!name || !name.trim()) return;
+  templates[name.trim()] = { subject: document.getElementById('mailSubject').value, greeting: document.getElementById('greeting').value, bodyMain: document.getElementById('bodyMain').value, bodySign: document.getElementById('bodySign').value };
+  localStorage.setItem('vbaMailTemplates', JSON.stringify(templates));
+  renderTemplates(); document.getElementById('templateSelect').value = name.trim();
+}
+function renameTemplate() {
+  const old = document.getElementById('templateSelect').value; if (!old) { alert('請先選擇範本'); return; }
+  const n = prompt('新名稱：', old); if (!n || !n.trim() || n.trim() === old) return;
+  if (templates[n.trim()]) { alert('已有同名範本'); return; }
+  templates[n.trim()] = templates[old]; delete templates[old];
+  localStorage.setItem('vbaMailTemplates', JSON.stringify(templates));
+  renderTemplates(); document.getElementById('templateSelect').value = n.trim();
+}
+function deleteTemplate() {
+  const name = document.getElementById('templateSelect').value; if (!name) { alert('請先選擇範本'); return; }
+  if (!confirm('確定刪除「' + name + '」？')) return;
+  delete templates[name]; localStorage.setItem('vbaMailTemplates', JSON.stringify(templates)); renderTemplates();
+}
+renderTemplates();
 
-  function insertVar(v) {
-    const target = lastFocused || document.getElementById('bodyMain');
-    target.focus();
-    const s = target.selectionStart;
-    const e = target.selectionEnd;
-    target.value = target.value.slice(0, s) + v + target.value.slice(e);
-    target.selectionStart = target.selectionEnd = s + v.length;
-  }
+// VBA 產生
+function toVbaLines(raw, dueDay) {
+  const VARS = [['{{醫師名}}','___DR___'],['{{診所名}}','___CL___'],['{{業務名}}','___SL___'],['{{金額}}','___AM___'],['{{截止日}}', dueDay]];
+  const VBA  = {'___DR___':'\" & doctorName & \"','___CL___':'\" & clinicName & \"','___SL___':'\" & salesName & \"','___AM___':'\" & Format(totalAmt, \"#,##0\") & \"'};
+  return raw.split('\n').map(line => {
+    VARS.forEach(([v,p]) => { line = line.split(v).join(p); });
+    line = line.replace(/"/g, '""');
+    Object.keys(VBA).forEach(p => { line = line.split(p).join(VBA[p]); });
+    return line;
+  });
+}
+function linesToVba(lines) {
+  const ind = '               ';
+  return lines.map(l => ind + '"' + l + '<br>"').join(' & _\n');
+}
 
-  function toggleCCMode() {
-    const isManual = document.getElementById('ccModeManual').checked;
-    document.getElementById('ccColumnField').style.display = isManual ? 'none' : 'flex';
-    document.getElementById('ccManualField').style.display = isManual ? 'flex' : 'none';
-  }
-  
-  function initCCMode() {
-    document.getElementById('ccColumnField').style.display = 'flex';
-    document.getElementById('ccManualField').style.display = 'none';
-  }
+function generateVBA() {
+  const pdfPath      = document.getElementById('pdfPath').value.trim().replace(/^"+|"+$/g,'').trim();
+  const sheetName    = document.getElementById('sheetName').value.trim() || '資料放這邊';
+  const pdfCol       = document.getElementById('pdfMatchColumn').value.trim().toUpperCase() || 'B';
+  const subject      = document.getElementById('mailSubject').value.trim();
+  const toCol        = document.getElementById('toColumn').value.trim().toUpperCase() || 'A';
+  const useThr       = document.getElementById('useThreshold').checked;
+  const thr          = document.getElementById('threshold').value || '10000';
+  const useDue       = document.getElementById('useDueDate').checked;
+  const dueDay       = document.getElementById('dueDay').value || '25';
+  const useCC        = document.getElementById('useCC').checked;
+  const ccIsManual   = document.getElementById('ccModeManual').checked;
+  const ccCol        = document.getElementById('ccColumn').value.trim().toUpperCase() || 'G';
+  const ccManual     = document.getElementById('ccManual').value.trim();
+  const greeting     = document.getElementById('greeting').value.trim();
+  const bodyMain     = document.getElementById('bodyMain').value.trim();
+  const bodySign     = document.getElementById('bodySign').value.trim();
 
-  function cleanPath(el) {
-    // 移除前後空白、以及前後多餘的引號（右鍵複製路徑會帶引號）
-    let v = el.value.trim();
-    v = v.replace(/^"+|"+$/g, '');
-    el.value = v.trim();
-  }
+  const ind = '               ';
+  const gVba = linesToVba(toVbaLines(greeting, dueDay));
+  const bVba = linesToVba(toVbaLines(bodyMain, dueDay));
+  const sVba = linesToVba(toVbaLines(bodySign, dueDay));
 
-  function generateVBA() {
-    const pdfPath = document.getElementById('pdfPath').value.trim();
-    const sheetName = document.getElementById('sheetName').value.trim() || '資料放這邊';
-    const subject = document.getElementById('mailSubject').value.trim();
-    const greeting = document.getElementById('greeting').value.trim();
-    const bodyMain = document.getElementById('bodyMain').value.trim();
-    const bodySign = document.getElementById('bodySign').value.trim();
-    const useThreshold = document.getElementById('useThreshold').checked;
-    const threshold = document.getElementById('threshold').value || '10000';
-    const useDueDate = document.getElementById('useDueDate').checked;
-    const dueDay = document.getElementById('dueDay').value || '25';
-    const useCC = document.getElementById('useCC').checked;
-    const toColumn = document.getElementById('toColumn').value.trim().toUpperCase() || 'A';
-    const pdfMatchColumn = document.getElementById('pdfMatchColumn').value.trim().toUpperCase() || 'B';
-    const ccColumn = document.getElementById('ccColumn').value.trim().toUpperCase() || 'G';
-    const ccManual = document.getElementById('ccManual').value.trim();
-    const ccIsManual = document.getElementById('ccModeManual').checked;
+  const L = []; const p = s => L.push(s);
 
-    // 把使用者輸入的文字轉成 VBA HTMLBody 的字串片段
-    // 策略：每一行獨立處理，變數用特殊 placeholder 保護，最後再還原
-    function toVbaHtmlLines(raw, dueDay) {
-      const VARS = [
-        ['{{醫師名}}', '___DR___'],
-        ['{{診所名}}', '___CL___'],
-        ['{{業務名}}', '___SL___'],
-        ['{{金額}}',   '___AM___'],
-        ['{{截止日}}', dueDay],
-      ];
-      const VBA_VARS = {
-        '___DR___': '" & doctorName & "',
-        '___CL___': '" & clinicName & "',
-        '___SL___': '" & salesName & "',
-        '___AM___': '" & Format(totalAmt, "#,##0") & "',
-      };
+  p('Option Explicit'); p('');
+  p('Sub 發信草稿_依設定產生()'); p('');
+  p('    Dim olApp As Object, olMail As Object');
+  p('    Dim ws As Worksheet');
+  p('    Set ws = ThisWorkbook.Sheets("' + sheetName.replace(/"/g,'""') + '")'); p('');
+  p('    Dim lastRow As Long, i As Long');
+  p('    Dim groupDict As Object');
+  p('    Set groupDict = CreateObject("Scripting.Dictionary")'); p('');
+  p('    Dim doctorName As String, salesName As String, clinicName As String');
+  p('    Dim email As String, ccEmail As String, groupKey As String');
+  p('    Dim k As Variant, firstRow As Long');
+  p('    Dim groupItems As Collection');
+  p('    Dim totalAmt As Double');
+  p('    Dim createdCount As Long, skippedCount As Long');
+  p('    Dim groupContentHtml As String'); p('');
+  p('    Dim folderPath As String');
+  p('    folderPath = "' + pdfPath.replace(/"/g,'""') + '"'); p('');
+  p('    Set olApp = CreateObject("Outlook.Application")'); p('');
+  p('    If Dir(folderPath, vbDirectory) = "" Then');
+  p('        MsgBox "找不到 PDF 資料夾：" & vbCrLf & folderPath, vbExclamation');
+  p('        Exit Sub');
+  p('    End If'); p('');
+  p('    lastRow = ws.Cells(ws.Rows.Count, "D").End(xlUp).Row'); p('');
+  p("    '== 分組：醫師(D) + 業務(F) ==");
+  p('    For i = 2 To lastRow');
+  p('        doctorName = Trim(CStr(ws.Cells(i, "D").Value))');
+  p('        salesName  = Trim(CStr(ws.Cells(i, "F").Value))');
+  p('        If doctorName <> "" And salesName <> "" Then');
+  p('            groupKey = doctorName & "||" & salesName');
+  p('            If Not groupDict.Exists(groupKey) Then');
+  p('                Set groupDict(groupKey) = New Collection');
+  p('            End If');
+  p('            groupDict(groupKey).Add i');
+  p('        End If');
+  p('    Next i'); p('');
+  p("    '== 建立草稿 ==");
+  p('    For Each k In groupDict.Keys');
+  p('        Set groupItems = groupDict(k)');
+  p('        firstRow   = groupItems(1)');
+  p('        doctorName = Trim(CStr(ws.Cells(firstRow, "D").Value))');
+  p('        salesName  = Trim(CStr(ws.Cells(firstRow, "F").Value))');
+  p('        clinicName = Trim(CStr(ws.Cells(firstRow, "C").Value))');
+  p('        email      = Trim(CStr(ws.Cells(firstRow, "' + toCol + '").Value))');
+  if (useCC) {
+    if (ccIsManual) { p('        ccEmail    = "' + ccManual.replace(/"/g,'""') + '" \' 固定 CC'); }
+    else            { p('        ccEmail    = Trim(CStr(ws.Cells(firstRow, "' + ccCol + '").Value))'); }
+  } else { p('        ccEmail    = "" \' CC 未啟用'); }
+  p('        totalAmt   = GetGroupTotal(ws, groupItems)'); p('');
+  p(useThr ? '        If totalAmt > ' + thr + ' Then' : "        If True Then ' 無金額門檻");
+  p('            groupContentHtml = GetGroupContentHtml(ws, groupItems, totalAmt)'); p('');
+  p('            Set olMail = olApp.CreateItem(0)');
+  p('            With olMail');
+  p('                .To = email');
+  p('                If ccEmail <> "" Then .CC = ccEmail');
+  p('                .Subject = "' + subject.replace(/"/g,'""') + '"');
+  p('                .HTMLBody = "<div style=\'font-family:Microsoft JhengHei,Arial,sans-serif;font-size:11pt;\'>" & _');
+  p(gVba + ' & _');
+  p(ind + '"<br><br>" & _');
+  p(ind + 'groupContentHtml & _');
+  p(ind + '"<br><br>" & _');
+  p(bVba + ' & _');
+  p(ind + '"<br><br>" & _');
+  if (useDue) { p(ind + '"請於本月' + dueDay + '號前完成繳款。<br>" & _'); }
+  p(sVba + ' & _');
+  p(ind + '"</div>"');
+  p('                Call AttachPdfFilesForGroup(ws, groupItems, olMail, folderPath)');
+  p('                .Save');
+  p('            End With');
+  p('            createdCount = createdCount + 1');
+  p('        Else');
+  p('            skippedCount = skippedCount + 1');
+  p('        End If');
+  p('    Next k'); p('');
+  p('    MsgBox "完成！" & vbCrLf & _');
+  p('           "已建立草稿：" & createdCount & " 封" & vbCrLf & _');
+  p('           "跳過：" & skippedCount & " 組", vbInformation'); p('');
+  p('End Sub'); p(''); p('');
 
-      return raw.split('\n').map(line => {
-        VARS.forEach(([v, p]) => { line = line.split(v).join(p); });
-        line = line.replace(/"/g, '""');
-        Object.keys(VBA_VARS).forEach(p => { line = line.split(p).join(VBA_VARS[p]); });
-        // 清理開頭多餘的空字串：從 "" & 開頭 → 直接從變數開始
-        line = line.replace(/^"" & /, '');
-        // 也處理 escape 過後的版本
-        line = line.replace(/^"" & /, '');
-        return line;
-      });
-    }
+  p('Function GetGroupTotal(ws As Worksheet, groupItems As Collection) As Double');
+  p('    Dim i As Long, r As Long, total As Double');
+  p('    For i = 1 To groupItems.Count');
+  p('        r = groupItems(i)');
+  p('        If IsNumeric(ws.Cells(r, "E").Value) Then');
+  p('            total = total + CDbl(ws.Cells(r, "E").Value)');
+  p('        End If');
+  p('    Next i');
+  p('    GetGroupTotal = total');
+  p('End Function'); p(''); p('');
 
-    // 把行陣列組成 VBA HTMLBody 的 & _ 串接格式
-    function linesToVbaBody(lines, indent) {
-      return lines.map((l, idx) => {
-        // 去掉行首的 " & 和行尾的 & " 造成的空字串
-        let vbaLine = indent + '"' + l + '<br>"';
-        return vbaLine;
-      }).join(' & _\n');
-    }
+  p('Function GetGroupContentHtml(ws As Worksheet, groupItems As Collection, totalAmt As Double) As String');
+  p('    If groupItems.Count = 1 Then');
+  p('        GetGroupContentHtml = "您目前尚欠的逾期款為 " & _');
+  p('                              "<span style=\'color:red; font-size:16px; font-weight:bold;\'>$" & _');
+  p('                              Format(totalAmt, "#,##0") & "</span>"');
+  p('    Else');
+  p('        GetGroupContentHtml = "下列是您目前尚欠的逾期款明細：<br><br>" & _');
+  p('                              BuildHtmlTable(ws, groupItems)');
+  p('    End If');
+  p('End Function'); p(''); p('');
 
-    const greetingLines = toVbaHtmlLines(greeting, dueDay);
-    const bodyMainLines = toVbaHtmlLines(bodyMain, dueDay);
-    const bodySignLines = toVbaHtmlLines(bodySign, dueDay);
-    const ind = '               ';
+  p('Function BuildHtmlTable(ws As Worksheet, groupItems As Collection) As String');
+  p('    Dim html As String');
+  p('    Dim i As Long, r As Long, totalAmt As Double');  p('');
+  p('    html = "<table border=\'1\' cellspacing=\'0\' cellpadding=\'6\' style=\'border-collapse:collapse; font-family:Microsoft JhengHei,Arial,sans-serif; font-size:11pt;\'>" & _');
+  p('           "<tr style=\'background-color:#f2f2f2;\'>" & _');
+  p('           "<th>Account</th><th>診所</th><th>醫師名</th><th>逾期款</th>" & _');
+  p('           "</tr>"'); p('');
+  p('    totalAmt = 0');
+  p('    For i = 1 To groupItems.Count');
+  p('        r = groupItems(i)');
+  p('        html = html & "<tr>" & _');
+  p('                      "<td>" & ws.Cells(r, "B").Value & "</td>" & _');
+  p('                      "<td>" & ws.Cells(r, "C").Value & "</td>" & _');
+  p('                      "<td>" & ws.Cells(r, "D").Value & "</td>" & _');
+  p('                      "<td align=\'right\'>$" & Format(ws.Cells(r, "E").Value, "#,##0") & "</td>" & _');
+  p('                      "</tr>"');
+  p('        If IsNumeric(ws.Cells(r, "E").Value) Then');
+  p('            totalAmt = totalAmt + CDbl(ws.Cells(r, "E").Value)');
+  p('        End If');
+  p('    Next i'); p('');
+  p('    html = html & "<tr style=\'background-color:#fff2cc; font-weight:bold;\'>" & _');
+  p('                  "<td colspan=\'3\' align=\'center\'>加總</td>" & _');
+  p('                  "<td align=\'right\'>$" & Format(totalAmt, "#,##0") & "</td>" & _');
+  p('                  "</tr></table>"'); p('');
+  p('    BuildHtmlTable = html');
+  p('End Function'); p(''); p('');
 
-    const greetingVba = linesToVbaBody(greetingLines, ind);
-    const bodyMainVba = linesToVbaBody(bodyMainLines, ind);
-    const bodySignVba = linesToVbaBody(bodySignLines, ind);
-    const dueDateVba  = useDueDate ? ind + '"請於本月' + dueDay + '號前完成繳款。<br>" & _\n' : '';
+  p('Sub AttachPdfFilesForGroup(ws As Worksheet, groupItems As Collection, olMail As Object, folderPath As String)'); p('');
+  p('    Dim attachedDict As Object');
+  p('    Set attachedDict = CreateObject("Scripting.Dictionary")'); p('');
+  p('    Dim allFiles() As String');
+  p('    Dim fileCount As Long, f As String');
+  p('    fileCount = 0'); p('');
+  p('    f = Dir(folderPath & "\\*.pdf")');
+  p('    Do While f <> ""');
+  p('        ReDim Preserve allFiles(fileCount)');
+  p('        allFiles(fileCount) = f');
+  p('        fileCount = fileCount + 1');
+  p('        f = Dir()');
+  p('    Loop'); p('');
+  p('    Dim i As Long, j As Long, r As Long');
+  p('    Dim accountValue As String, fullPath As String'); p('');
+  p('    For i = 1 To groupItems.Count');
+  p('        r = groupItems(i)');
+  p('        accountValue = Trim(CStr(ws.Cells(r, "' + pdfCol + '").Value))');
+  p('        If accountValue <> "" And fileCount > 0 Then');
+  p('            For j = 0 To fileCount - 1');
+  p('                If IsPdfMatch(allFiles(j), accountValue) Then');
+  p('                    fullPath = folderPath & "\\" & allFiles(j)');
+  p('                    If Not attachedDict.Exists(fullPath) Then');
+  p('                        olMail.Attachments.Add fullPath');
+  p('                        attachedDict.Add fullPath, True');
+  p('                    End If');
+  p('                End If');
+  p('            Next j');
+  p('        End If');
+  p('    Next i'); p('');
+  p('End Sub'); p(''); p('');
 
-    const lines = [];
-    lines.push('Option Explicit');
-    lines.push('');
-    lines.push('Sub 發信草稿_依設定產生()');
-    lines.push('');
-    lines.push('    Dim olApp As Object, olMail As Object');
-    lines.push('    Dim ws As Worksheet');
-    lines.push('    Set ws = ThisWorkbook.Sheets("' + sheetName.replace(/"/g, '""') + '")');
-    lines.push('');
-    lines.push('    Dim lastRow As Long, i As Long');
-    lines.push('    Dim groupDict As Object');
-    lines.push('    Set groupDict = CreateObject("Scripting.Dictionary")');
-    lines.push('');
-    lines.push('    Dim doctorName As String, salesName As String, clinicName As String');
-    lines.push('    Dim email As String, ccEmail As String, groupKey As String');
-    lines.push('    Dim k As Variant, firstRow As Long');
-    lines.push('    Dim groupItems As Collection');
-    lines.push('    Dim totalAmt As Double');
-    lines.push('    Dim createdCount As Long, skippedCount As Long');
-    lines.push('    Dim groupContentHtml As String');
-    lines.push('');
-    lines.push('    Dim folderPath As String');
-    lines.push('    folderPath = "' + pdfPath.replace(/"/g, '""') + '"');
-    lines.push('');
-    lines.push('    Set olApp = CreateObject("Outlook.Application")');
-    lines.push('');
-    lines.push('    If Dir(folderPath, vbDirectory) = "" Then');
-    lines.push('        MsgBox "找不到 PDF 資料夾：" & vbCrLf & folderPath, vbExclamation');
-    lines.push('        Exit Sub');
-    lines.push('    End If');
-    lines.push('');
-    lines.push('    lastRow = ws.Cells(ws.Rows.Count, "D").End(xlUp).Row');
-    lines.push('');
-    lines.push("    '== 分組：醫師(D) + 業務(F) ==");
-    lines.push('    For i = 2 To lastRow');
-    lines.push('        doctorName = Trim(CStr(ws.Cells(i, "D").Value))');
-    lines.push('        salesName  = Trim(CStr(ws.Cells(i, "F").Value))');
-    lines.push('        If doctorName <> "" And salesName <> "" Then');
-    lines.push('            groupKey = doctorName & "||" & salesName');
-    lines.push('            If Not groupDict.Exists(groupKey) Then');
-    lines.push('                Set groupDict(groupKey) = New Collection');
-    lines.push('            End If');
-    lines.push('            groupDict(groupKey).Add i');
-    lines.push('        End If');
-    lines.push('    Next i');
-    lines.push('');
-    lines.push("    '== 建立草稿 ==");
-    lines.push('    For Each k In groupDict.Keys');
-    lines.push('        Set groupItems = groupDict(k)');
-    lines.push('        firstRow   = groupItems(1)');
-    lines.push('        doctorName = Trim(CStr(ws.Cells(firstRow, "D").Value))');
-    lines.push('        salesName  = Trim(CStr(ws.Cells(firstRow, "F").Value))');
-    lines.push('        clinicName = Trim(CStr(ws.Cells(firstRow, "C").Value))');
-    lines.push('        email      = Trim(CStr(ws.Cells(firstRow, "' + toColumn + '").Value))');
-    if (useCC) {
-      if (ccIsManual) {
-        lines.push('        ccEmail    = "' + ccManual.replace(/"/g, '""') + '" ' 固定 CC');
-      } else {
-        lines.push('        ccEmail    = Trim(CStr(ws.Cells(firstRow, "' + ccColumn + '").Value))');
-      }
-    } else {
-      lines.push('        ccEmail    = "" ' CC 未啟用');
-    }
-    lines.push('        totalAmt   = GetGroupTotal(ws, groupItems)');
-    lines.push('');
-    if (useThreshold) {
-      lines.push('        If totalAmt > ' + threshold + ' Then');
-    } else {
-      lines.push("        If True Then ' 無金額門檻，全部發信");
-    }
-    lines.push('            groupContentHtml = GetGroupContentHtml(ws, groupItems, totalAmt)');
-    lines.push('');
-    lines.push('            Set olMail = olApp.CreateItem(0)');
-    lines.push('            With olMail');
-    lines.push('                .To = email');
-    lines.push('                If ccEmail <> "" Then .CC = ccEmail');
-    lines.push('                .Subject = "' + subject.replace(/"/g, '""') + '"');
-    lines.push('                .HTMLBody = "<div style=\'font-family:Microsoft JhengHei,Arial,sans-serif;font-size:11pt;\'>" & _');
-    lines.push(greetingVba + ' & _');
-    lines.push(ind + '"<br><br>" & _');
-    lines.push(ind + 'groupContentHtml & _');
-    lines.push(ind + '"<br><br>" & _');
-    lines.push(bodyMainVba + ' & _');
-    lines.push(ind + '"<br><br>" & _');
-    if (useDueDate) lines.push(ind + '"請於本月' + dueDay + '號前完成繳款。<br>" & _');
-    lines.push(bodySignVba + ' & _');
-    lines.push(ind + '"</div>"');
-    lines.push('                Call AttachPdfFilesForGroup(ws, groupItems, olMail, folderPath)');
-    lines.push('                .Save');
-    lines.push('            End With');
-    lines.push('            createdCount = createdCount + 1');
-    lines.push('        Else');
-    lines.push('            skippedCount = skippedCount + 1');
-    lines.push('        End If');
-    lines.push('    Next k');
-    lines.push('');
-    lines.push('    MsgBox "完成！" & vbCrLf & _');
-    lines.push('           "已建立草稿：" & createdCount & " 封" & vbCrLf & _');
-    lines.push('           "跳過：" & skippedCount & " 組", vbInformation');
-    lines.push('');
-    lines.push('End Sub');
-    lines.push('');
-    lines.push('');
-    lines.push('Function GetGroupTotal(ws As Worksheet, groupItems As Collection) As Double');
-    lines.push('    Dim i As Long, r As Long, total As Double');
-    lines.push('    For i = 1 To groupItems.Count');
-    lines.push('        r = groupItems(i)');
-    lines.push('        If IsNumeric(ws.Cells(r, "E").Value) Then');
-    lines.push('            total = total + CDbl(ws.Cells(r, "E").Value)');
-    lines.push('        End If');
-    lines.push('    Next i');
-    lines.push('    GetGroupTotal = total');
-    lines.push('End Function');
-    lines.push('');
-    lines.push('');
-    lines.push('Function GetGroupContentHtml(ws As Worksheet, groupItems As Collection, totalAmt As Double) As String');
-    lines.push('    If groupItems.Count = 1 Then');
-    lines.push('        GetGroupContentHtml = "您目前尚欠的逾期款為 " & _');
-    lines.push('                              "<span style=\'color:red; font-size:16px; font-weight:bold;\'>$" & _');
-    lines.push('                              Format(totalAmt, "#,##0") & "</span>"');
-    lines.push('    Else');
-    lines.push('        GetGroupContentHtml = "下列是您目前尚欠的逾期款明細：<br><br>" & _');
-    lines.push('                              BuildHtmlTable(ws, groupItems)');
-    lines.push('    End If');
-    lines.push('End Function');
-    lines.push('');
-    lines.push('');
-    lines.push('Function BuildHtmlTable(ws As Worksheet, groupItems As Collection) As String');
-    lines.push('    Dim html As String');
-    lines.push('    Dim i As Long, r As Long, totalAmt As Double');
-    lines.push('');
-    lines.push('    html = "<table border=\'1\' cellspacing=\'0\' cellpadding=\'6\' style=\'border-collapse:collapse; font-family:Microsoft JhengHei,Arial,sans-serif; font-size:11pt;\'>" & _');
-    lines.push('           "<tr style=\'background-color:#f2f2f2;\'>" & _');
-    lines.push('           "<th>Account</th><th>診所</th><th>醫師名</th><th>逾期款</th>" & _');
-    lines.push('           "</tr>"');
-    lines.push('');
-    lines.push('    totalAmt = 0');
-    lines.push('    For i = 1 To groupItems.Count');
-    lines.push('        r = groupItems(i)');
-    lines.push('        html = html & "<tr>" & _');
-    lines.push('                      "<td>" & ws.Cells(r, "B").Value & "</td>" & _');
-    lines.push('                      "<td>" & ws.Cells(r, "C").Value & "</td>" & _');
-    lines.push('                      "<td>" & ws.Cells(r, "D").Value & "</td>" & _');
-    lines.push('                      "<td align=\'right\'>$" & Format(ws.Cells(r, "E").Value, "#,##0") & "</td>" & _');
-    lines.push('                      "</tr>"');
-    lines.push('        If IsNumeric(ws.Cells(r, "E").Value) Then');
-    lines.push('            totalAmt = totalAmt + CDbl(ws.Cells(r, "E").Value)');
-    lines.push('        End If');
-    lines.push('    Next i');
-    lines.push('');
-    lines.push('    html = html & "<tr style=\'background-color:#fff2cc; font-weight:bold;\'>" & _');
-    lines.push('                  "<td colspan=\'3\' align=\'center\'>加總</td>" & _');
-    lines.push('                  "<td align=\'right\'>$" & Format(totalAmt, "#,##0") & "</td>" & _');
-    lines.push('                  "</tr></table>"');
-    lines.push('');
-    lines.push('    BuildHtmlTable = html');
-    lines.push('End Function');
-    lines.push('');
-    lines.push('');
-    lines.push('Sub AttachPdfFilesForGroup(ws As Worksheet, groupItems As Collection, olMail As Object, folderPath As String)');
-    lines.push('');
-    lines.push('    Dim attachedDict As Object');
-    lines.push('    Set attachedDict = CreateObject("Scripting.Dictionary")');
-    lines.push('');
-    lines.push('    Dim allFiles() As String');
-    lines.push('    Dim fileCount As Long, f As String');
-    lines.push('    fileCount = 0');
-    lines.push('');
-    lines.push('    f = Dir(folderPath & "\\*.pdf")');
-    lines.push('    Do While f <> ""');
-    lines.push('        ReDim Preserve allFiles(fileCount)');
-    lines.push('        allFiles(fileCount) = f');
-    lines.push('        fileCount = fileCount + 1');
-    lines.push('        f = Dir()');
-    lines.push('    Loop');
-    lines.push('');
-    lines.push('    Dim i As Long, j As Long, r As Long');
-    lines.push('    Dim accountValue As String, fullPath As String');
-    lines.push('');
-    lines.push('    For i = 1 To groupItems.Count');
-    lines.push('        r = groupItems(i)');
-    lines.push('        accountValue = Trim(CStr(ws.Cells(r, "' + pdfMatchColumn + '").Value))');
-    lines.push('        If accountValue <> "" And fileCount > 0 Then');
-    lines.push('            For j = 0 To fileCount - 1');
-    lines.push('                If IsPdfMatch(allFiles(j), accountValue) Then');
-    lines.push('                    fullPath = folderPath & "\\" & allFiles(j)');
-    lines.push('                    If Not attachedDict.Exists(fullPath) Then');
-    lines.push('                        olMail.Attachments.Add fullPath');
-    lines.push('                        attachedDict.Add fullPath, True');
-    lines.push('                    End If');
-    lines.push('                End If');
-    lines.push('            Next j');
-    lines.push('        End If');
-    lines.push('    Next i');
-    lines.push('');
-    lines.push('End Sub');
-    lines.push('');
-    lines.push('');
-    lines.push('Function IsPdfMatch(fileName As String, accountValue As String) As Boolean');
-    lines.push('    Dim fd As String, ad As String');
-    lines.push('    fd = RemoveLeadingZeros(DigitsOnly(LCase$(fileName)))');
-    lines.push('    ad = RemoveLeadingZeros(DigitsOnly(LCase$(Trim$(CStr(accountValue)))))');
-    lines.push('    If ad <> "" And fd <> "" Then');
-    lines.push('        IsPdfMatch = (fd = ad)');
-    lines.push('    Else');
-    lines.push('        IsPdfMatch = False');
-    lines.push('    End If');
-    lines.push('End Function');
-    lines.push('');
-    lines.push('');
-    lines.push('Function DigitsOnly(ByVal txt As String) As String');
-    lines.push('    Dim i As Long, ch As String, result As String');
-    lines.push('    For i = 1 To Len(txt)');
-    lines.push('        ch = Mid$(txt, i, 1)');
-    lines.push('        If ch Like "#" Then result = result & ch');
-    lines.push('    Next i');
-    lines.push('    DigitsOnly = result');
-    lines.push('End Function');
-    lines.push('');
-    lines.push('');
-    lines.push('Function RemoveLeadingZeros(ByVal txt As String) As String');
-    lines.push('    Do While Len(txt) > 1 And Left$(txt, 1) = "0"');
-    lines.push('        txt = Mid$(txt, 2)');
-    lines.push('    Loop');
-    lines.push('    RemoveLeadingZeros = txt');
-    lines.push('End Function');
+  p('Function IsPdfMatch(fileName As String, accountValue As String) As Boolean');
+  p('    Dim fd As String, ad As String');
+  p('    fd = RemoveLeadingZeros(DigitsOnly(LCase$(fileName)))');
+  p('    ad = RemoveLeadingZeros(DigitsOnly(LCase$(Trim$(CStr(accountValue)))))');
+  p('    If ad <> "" And fd <> "" Then');
+  p('        IsPdfMatch = (fd = ad)');
+  p('    Else');
+  p('        IsPdfMatch = False');
+  p('    End If');
+  p('End Function'); p(''); p('');
 
-    const code = lines.join('\n');
+  p('Function DigitsOnly(ByVal txt As String) As String');
+  p('    Dim i As Long, ch As String, result As String');
+  p('    For i = 1 To Len(txt)');
+  p('        ch = Mid$(txt, i, 1)');
+  p('        If ch Like "#" Then result = result & ch');
+  p('    Next i');
+  p('    DigitsOnly = result');
+  p('End Function'); p(''); p('');
 
-    document.getElementById('outputBox').textContent = code;
-    document.getElementById('outputCard').classList.add('visible');
-    setTimeout(() => {
-      document.getElementById('outputCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
-  }
+  p('Function RemoveLeadingZeros(ByVal txt As String) As String');
+  p('    Do While Len(txt) > 1 And Left$(txt, 1) = "0"');
+  p('        txt = Mid$(txt, 2)');
+  p('    Loop');
+  p('    RemoveLeadingZeros = txt');
+  p('End Function');
 
-  function copyVBA() {
-    const text = document.getElementById('outputBox').textContent;
-    navigator.clipboard.writeText(text).then(() => {
-      const btn = document.getElementById('copyBtn');
-      btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg> 已複製`;
-      setTimeout(() => {
-        btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> 複製`;
-      }, 2000);
-    });
-  }
+  document.getElementById('outputBox').textContent = L.join('\n');
+  document.getElementById('outputCard').classList.add('open');
+  setTimeout(() => document.getElementById('outputCard').scrollIntoView({ behavior:'smooth', block:'start' }), 100);
+}
 
-  renderTemplates();
+function copyVBA() {
+  navigator.clipboard.writeText(document.getElementById('outputBox').textContent).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.innerHTML = '<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg> 已複製';
+    setTimeout(() => { btn.innerHTML = '<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> 複製'; }, 2000);
+  });
+}
 </script>
 </body>
 </html>
